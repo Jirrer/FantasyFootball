@@ -1,0 +1,15 @@
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\bin\Debug\net9.0\FantasyFootball_Backend.exe
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\bin\Debug\net9.0\FantasyFootball_Backend.deps.json
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\bin\Debug\net9.0\FantasyFootball_Backend.runtimeconfig.json
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\bin\Debug\net9.0\FantasyFootball_Backend.dll
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\bin\Debug\net9.0\FantasyFootball_Backend.pdb
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\obj\Debug\net9.0\FantasyFootball_Backend.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\obj\Debug\net9.0\FantasyFootball_Backend.AssemblyInfoInputs.cache
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\obj\Debug\net9.0\FantasyFootball_Backend.AssemblyInfo.cs
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\obj\Debug\net9.0\FantasyFootball_Backend.csproj.CoreCompileInputs.cache
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\obj\Debug\net9.0\FantasyFootball_Backend.sourcelink.json
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\obj\Debug\net9.0\FantasyFootball_Backend.dll
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\obj\Debug\net9.0\refint\FantasyFootball_Backend.dll
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\obj\Debug\net9.0\FantasyFootball_Backend.pdb
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\obj\Debug\net9.0\FantasyFootball_Backend.genruntimeconfig.cache
+C:\Users\jrirr\OneDrive\open_projects\FantasyFootball\FantasyFootball_Backend\obj\Debug\net9.0\ref\FantasyFootball_Backend.dll
