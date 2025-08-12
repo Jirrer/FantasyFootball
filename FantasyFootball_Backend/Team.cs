@@ -5,7 +5,7 @@ using System;
 public class Team
 {
     public string? name { get; }
-    private Player[] players = new Player[15];
+    List<Player> players = new List<Player>();
     public int numWR = 0;
     public int numRB = 0;
     public int numQB = 0;
@@ -19,17 +19,18 @@ public class Team
     }
     public void addPlayer(Player player)
     {
-        for (int index = 0; index < players.Length; index++)
+
+        players.Add(player);
+
+        switch (player.position)
         {
-            if (players[index] == null) { players[index] = player; }
+            case "WR": numWR++; break;
+            case "RB": numRB++; break;
+            case "QB": numQB++; break;
+            case "TE": numTE++; break;
+            case "K": numK++; break;
+            case "DFS": numDFS++; break;
+            default: Console.WriteLine("Error adding player"); break;
         }
-
     }
-    
-
-
-
-
-
-
 }
