@@ -19,8 +19,6 @@ def clearDB():
 
     connection.commit()
         
-
-
 def importTeam(team):
     with open(f'teams\\{team}.csv') as file:
         reader = csv.reader(file)

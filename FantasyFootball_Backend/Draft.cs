@@ -6,6 +6,7 @@ using System.Data.SQLite;
 public class Draft
 {
     public Dictionary<int, Player> players = new Dictionary<int, Player>();
+    private Dictionary<string, List<Player>> playersByTeam = new Dictionary<string, List<Player>>();
     private Team[] teams;
 
     private void populatePlayers()
@@ -40,10 +41,21 @@ public class Draft
         }
     }
 
+    private void orderTeams()
+    {
+        foreach (var player in this.players)
+        {
+            #pragma warning disable CS8604
+            if (playersByTeam.ContainsKey(player.Value.team)) { playersByTeam[player.Value.team].Add(player.Value); }
+            else { playersByTeam[player.Value.team] = new List<Player> { player.Value }; }
+        }
+    }
+
     public Draft(Team[] teams)
     {
         this.teams = teams;
         populatePlayers();
+        orderTeams();
 
     }
 
@@ -67,7 +79,7 @@ public class Draft
 
     private bool getPick(Team team)
     {
-        foreach (var n in players.Reverse()) { Console.WriteLine($"{n.Key}: {n.Value.name} | {n.Value.position} | {n.Value.team}"); }
+        printTeams();
 
         Console.WriteLine($"\n{team.numWR}/3 WR | {team.numRB}/3 RB | {team.numQB}/3 QB | {team.numTE}/2 TE | {team.numK}/2 K | {team.numDFS}/2 DFS");
         Console.Write($"{team.name}'s pick: ");
@@ -107,6 +119,27 @@ public class Draft
             default:
                 Console.WriteLine("error in finidng position");
                 return false;
+        }
+    }
+
+    private void printTeams()
+    {
+        foreach (var kvp in playersByTeam)
+        {
+            Console.WriteLine($"\n{kvp.Key}"); // Team name
+            foreach (var player in kvp.Value)
+            {
+                var match = players.FirstOrDefault(p => p.Value == player);
+                if (!match.Equals(default(KeyValuePair<int, Player>)))
+                {
+                    Console.WriteLine($"{match.Key}: {player.name} | {player.position} | {player.team}");
+                }
+                else
+                {
+                    // Print alternative key if not found
+                    Console.WriteLine($"N/A: {player.name} | {player.position} | {player.team}");
+                }
+            }
         }
     }
 }
