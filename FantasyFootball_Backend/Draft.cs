@@ -16,22 +16,24 @@ public class Draft
         {
             connection.Open();
 
-            string query = "SELECT id, name, team, position, jersey, projection FROM players";
+            string query = "SELECT name, team, position FROM players";
 
             using (var command = new SQLiteCommand(query, connection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())
                 {
+                    int id = 1;
                     while (reader.Read())
                     {
                         players.Add(
-                            reader.GetInt32(0),
-                            new Player(reader.GetString(1),
-                            reader.GetString(2),
-                            reader.GetString(3),
-                            reader.GetInt32(4),
-                            reader.GetDouble(5)
-                        ));
+                            id,
+                            new Player(
+                                reader.GetString(0),
+                                reader.GetString(1),
+                                reader.GetString(2)
+                            ));
+
+                        id++;
                     }
                 }
             }
@@ -65,7 +67,7 @@ public class Draft
 
     private bool getPick(Team team)
     {
-        foreach (var n in players.Reverse()) { Console.WriteLine($"{n.Key}: {n.Value.name} | {n.Value.position} | {n.Value.team} | {n.Value.projection}"); }
+        foreach (var n in players.Reverse()) { Console.WriteLine($"{n.Key}: {n.Value.name} | {n.Value.position} | {n.Value.team}"); }
 
         Console.WriteLine($"\n{team.numWR}/3 WR | {team.numRB}/3 RB | {team.numQB}/3 QB | {team.numTE}/2 TE | {team.numK}/2 K | {team.numDFS}/2 DFS");
         Console.Write($"{team.name}'s pick: ");
