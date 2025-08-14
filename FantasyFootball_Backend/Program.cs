@@ -27,13 +27,14 @@ static class Program
         shuffleDraft();
 
         draft.run();
+        draft.showDraftResult();
 
     }
 
     public static void shuffleDraft()
     {
         Random random = new Random();
-        
+
         for (int x = teams.Length - 1; x >= 0; x--)
         {
             int randomIndex = random.Next(x + 1);
