@@ -5,9 +5,17 @@ using System.Data.SQLite;
 
 public class Draft
 {
+    private readonly Team[] teams;
     public Dictionary<int, Player> players = new Dictionary<int, Player>();
     private Dictionary<string, List<Player>> playersByTeam = new Dictionary<string, List<Player>>();
-    private Team[] teams;
+    HashSet<Player> seenPlayers = new HashSet<Player>();
+
+    public Draft(Team[] teams)
+    {
+        this.teams = teams;
+        populatePlayers();
+        orderTeams();
+    }
 
     private void populatePlayers()
     {
@@ -17,7 +25,7 @@ public class Draft
         {
             connection.Open();
 
-            string query = "SELECT name, team, position FROM players";
+            string query = "SELECT name, team, position FROM players order by team, position;";
 
             using (var command = new SQLiteCommand(query, connection))
             {
@@ -51,14 +59,6 @@ public class Draft
         }
     }
 
-    public Draft(Team[] teams)
-    {
-        this.teams = teams;
-        populatePlayers();
-        orderTeams();
-
-    }
-
     public void run()
     {
         int roundNumber = 1;
@@ -67,14 +67,23 @@ public class Draft
             int index = 0;
             while (index < teams.Length)
             {
-                Team playerUp = teams[index];
-                if (getPick(playerUp)) { Console.WriteLine("Player Added"); index++; }
-                else { Console.WriteLine("Invalid pick"); }
+                try
+                {
+                    Team playerUp = teams[index];
+                    if (getPick(playerUp)) { Console.WriteLine("Player Added"); index++; }
+                    else { Console.WriteLine("Invalid pick"); }
+                }
+                catch (KeyNotFoundException)
+                {
+                    Console.WriteLine("Invalid pick");
+                }
             }
 
             Array.Reverse(teams);
             roundNumber++;
         }
+
+        showDraftResult();
     }
 
     private bool getPick(Team team)
@@ -90,36 +99,47 @@ public class Draft
             return false;
         }
 
+
+        bool addedPlayer;
         switch (players[playerId].position)
         {
             case "WR":
-                if (team.numWR < 3) { team.addPlayer(players[playerId]); players.Remove(playerId); return true; }
+                if (team.numWR < 3) { team.addPlayer(players[playerId]); addedPlayer = true; break; }
                 else { return false; }
 
             case "RB":
-                if (team.numRB < 3) { team.addPlayer(players[playerId]); players.Remove(playerId); return true; }
+                if (team.numRB < 3) { team.addPlayer(players[playerId]); addedPlayer = true; break; }
                 else { return false; }
 
             case "QB":
-                if (team.numQB < 3) { team.addPlayer(players[playerId]); players.Remove(playerId); return true; }
+                if (team.numQB < 3) { team.addPlayer(players[playerId]); addedPlayer = true; break; }
                 else { return false; }
 
             case "TE":
-                if (team.numTE < 2) { team.addPlayer(players[playerId]); players.Remove(playerId); return true; }
+                if (team.numTE < 2) { team.addPlayer(players[playerId]); addedPlayer = true; break; }
                 else { return false; }
 
             case "K":
-                if (team.numK < 2) { team.addPlayer(players[playerId]); players.Remove(playerId); return true; }
+                if (team.numK < 2) { team.addPlayer(players[playerId]); addedPlayer = true; break; }
                 else { return false; }
 
             case "DFS":
-                if (team.numDFS < 2) { team.addPlayer(players[playerId]); players.Remove(playerId); return true; }
+                if (team.numDFS < 2) { team.addPlayer(players[playerId]); addedPlayer = true; break; }
                 else { return false; }
 
             default:
                 Console.WriteLine("error in finidng position");
                 return false;
         }
+
+        if (addedPlayer)
+        {
+            if (seenPlayers.Contains(players[playerId])) { players.Remove(playerId); }
+            else { seenPlayers.Add(players[playerId]); }
+        } 
+
+        if (addedPlayer) { return true; }
+        else { return false; }
     }
 
     private void printTeams()
@@ -140,6 +160,32 @@ public class Draft
                     Console.WriteLine($"N/A: {player.name} | {player.position} | {player.team}");
                 }
             }
+        }
+    }
+
+    public void showDraftResult()
+    {
+        foreach (Team team in teams)
+        {
+            Dictionary<string, List<Player>> teamsPlayers = new Dictionary<string, List<Player>>
+            {
+                {"QB", new List<Player>()},
+                {"WR", new List<Player>()},
+                {"RB", new List<Player>()},
+                {"TE", new List<Player>()},
+                {"K", new List<Player>()},
+                {"DFS", new List<Player>()}
+            };
+
+            foreach (Player player in team.players) { teamsPlayers[player.position].Add(player); }
+
+            Console.WriteLine($"\nTeam - {team.name}");
+            Console.Write($"QBs"); foreach (var x in teamsPlayers["QB"]) { Console.Write($" | {x.name} - {x.team}"); }
+            Console.Write($"\nWR"); foreach (var x in teamsPlayers["WR"]) { Console.Write($" | {x.name} - {x.team}"); }
+            Console.Write($"\nRB"); foreach (var x in teamsPlayers["RB"]) { Console.Write($" | {x.name} - {x.team}"); }
+            Console.Write($"\nTE"); foreach (var x in teamsPlayers["TE"]) { Console.Write($" | {x.name} - {x.team}"); }
+            Console.Write($"\nK"); foreach (var x in teamsPlayers["K"]) { Console.Write($" | {x.name} - {x.team}"); }
+            Console.Write($"\nDFS"); foreach (var x in teamsPlayers["DFS"]) { Console.Write($" | {x.name} - {x.team}"); }
         }
     }
 }

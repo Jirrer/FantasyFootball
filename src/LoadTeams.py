@@ -4,6 +4,8 @@ import sqlite3
 allowed_positions = ["WR", "RB", "QB", "TE", "K"]
 selected_teams = ["Lions", "Bills", "Jets", "Dolphins"]
 
+database_connection = sqlite3.connect("..\\FantasyFootball_Backend\\FantasyFootball.db")
+
 def main():
     clearDB()
     
@@ -12,12 +14,12 @@ def main():
         importTeam(team)
 
 def clearDB():
-    connection = sqlite3.connect("..\\FantasyFootball_Backend\\FantasyFootball.db")
-    cursor = connection.cursor()
+    global database_connection
+    cursor = database_connection.cursor()
 
     cursor.execute("DELETE FROM players")
 
-    connection.commit()
+    database_connection.commit()
         
 def importTeam(team):
     with open(f'teams\\{team}.csv') as file:
@@ -31,8 +33,8 @@ def importTeam(team):
     updateDb(selectedPlayers, team)
 
 def updateDb(playersList, teamName):
-    connection = sqlite3.connect("..\\FantasyFootball_Backend\\FantasyFootball.db")
-    cursor = connection.cursor()
+    global database_connection
+    cursor = database_connection.cursor()
     
     cursor.execute(f"""
         INSERT OR IGNORE INTO players (name, position, team)
@@ -43,20 +45,14 @@ def updateDb(playersList, teamName):
         playerName = player[1]
         playerPosition = player[3]
 
-        print(f"added - {playerName, playerPosition, teamName}")
-
         cursor.execute(f"""
         INSERT OR IGNORE INTO players (name, position, team)
         values ("{playerName}","{playerPosition}","{teamName}")
         """)
+        
+        print(f"added - {playerName, playerPosition, teamName}")
 
-    connection.commit()
+    database_connection.commit()
+    database_connection.close()
 
-
-
-
-
-
-
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__": main()
