@@ -4,9 +4,7 @@ using System;
 
 static class Program
 {
-    static void Main()
-    {
-        Team[] teams =
+    private static Team[] teams =
         [
             new Team("Team 1"),
             new Team("Team 2"),
@@ -22,8 +20,25 @@ static class Program
             // new Team("Team 12"),
         ];
 
+    static void Main()
+    {
         Draft draft = new Draft(teams);
 
+        shuffleDraft();
+
         draft.run();
+
+    }
+
+    public static void shuffleDraft()
+    {
+        Random random = new Random();
+        
+        for (int x = teams.Length - 1; x >= 0; x--)
+        {
+            int randomIndex = random.Next(x + 1);
+            (teams[x], teams[randomIndex]) = (teams[randomIndex], teams[x]);
+        }
+
     }
 }

@@ -4,8 +4,8 @@ using System;
 
 public class Team
 {
-    public string? name { get; }
-    List<Player> players = new List<Player>();
+    public string name { get; }
+    public List<Player> players = new List<Player>();
     public int numWR = 0;
     public int numRB = 0;
     public int numQB = 0;
@@ -13,10 +13,8 @@ public class Team
     public int numK = 0;
     public int numDFS = 0;
 
-    public Team(string name)
-    {
-        this.name = name;
-    }
+    public Team(string name) { this.name = name; }
+    
     public void addPlayer(Player player)
     {
 
