@@ -1,0 +1,79 @@
+body {
+    padding: 0;
+    margin: 0;
+    background-color: black;
+}
+
+.draftPageBody {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+
+}
+
+.topBar {
+    margin: 2px;
+    margin-bottom: 0;
+    background-color: #3385ff;
+    flex: 1;
+}
+
+#topBar_teams {
+    display: flex;
+    align-items: center; 
+    overflow-x: auto;         
+}
+
+#topBarTeam {
+    display: flex;
+    height: 50px;
+    min-width: 150px; 
+    margin: 3px;
+    flex: 1 1 auto; 
+    align-items: center;
+    align-self: center;
+    background: #8c8c8c;
+    color: white;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+}
+
+.draftBoard {
+    margin: 2px;
+    margin-bottom: 0;
+    background-color: #cccccc;
+    flex: 15;
+}
+
+.bottomBar {
+    margin: 2px;
+    margin-bottom: 0;
+    background-color: #002966;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+}
+
+.bottomBar button {
+    cursor: pointer;
+}
+
+.bottomBar button:hover {
+    background-color: #66a3ff;
+}
+
+#draftBoardButton {
+    flex: 1;
+    display: flex;
+    align-items: center;      
+    justify-content: center;
+    margin-right: 1px;
+}
+
+#showTeamsButton {
+    flex: 1;
+    display: flex;
+    align-items: center;      
+    justify-content: center;
+    margin-left: 1px;
+}

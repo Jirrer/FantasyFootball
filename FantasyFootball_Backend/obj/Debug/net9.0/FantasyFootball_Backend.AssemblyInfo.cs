@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FantasyFootball_Backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8f9b602ab667e6a14147452c5e87c907e2e7a03d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a76724e0350db5bf1d6db28ebeacf84dc145543a")]
 [assembly: System.Reflection.AssemblyProductAttribute("FantasyFootball_Backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FantasyFootball_Backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
