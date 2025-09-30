@@ -17,7 +17,7 @@ DraftPicks = {'testusername': [], 'Test': [], 'test2': []} # need to create empt
 availablePlayers = createPlayers()
 
 
-def submitPick(username, pick):
+def submitPick(username, pick): 
     userPicks = DraftPicks[username]
 
     if not playerIsAvailable(pick): return False
