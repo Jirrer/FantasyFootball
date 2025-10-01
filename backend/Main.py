@@ -1,21 +1,22 @@
+from collections import Counter
 import json
 from Player import Player
-from collections import Counter
 
 def createPlayers():
     players = Counter()
-
     with open('data/Players.json', 'r') as file:
         playerDict = json.load(file)
-
         for player in playerDict:
-            players[Player(player["name"], player["position"], player["team"])] += 2
-
+            p = Player(player["name"], player["position"], player["team"])
+            players[p] += 2  # 2 copies of each player
     return players
 
-DraftPicks = {'testusername': [], 'Test': [], 'test2': []} # need to create empty arrays when game gets started
 availablePlayers = createPlayers()
+DraftPicks = {}
 
+def startDraft(usersInput):
+    for user in usersInput:
+        DraftPicks[user] = []
 
 def submitPick(username, pick): 
     userPicks = DraftPicks[username]
@@ -29,11 +30,11 @@ def submitPick(username, pick):
     global availablePlayers
     availablePlayers[pick] -= 1
 
+    print(f"{username} drafts {pick}")
+
     return True
 
 def playerIsAvailable(player):
-    global availablePlayers
-
     if availablePlayers[player] > 0: return True
     else: return False
 
@@ -59,12 +60,3 @@ def openPosition(userPlayers, pickPosition):
 
     if currCount >= count: return False
     else: return True
-
-    
-
-    
-print(submitPick('testusername', Player("Josh Allen", "QB", "Bills")))
-print(submitPick('Test', Player("Josh Allen", "QB", "Bills")))
-print(submitPick('test2', Player("Josh Allen", "QB", "Bills")))
-
-print(DraftPicks)

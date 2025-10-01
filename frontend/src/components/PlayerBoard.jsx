@@ -1,6 +1,11 @@
-import React from 'react'
+import { React, useContext } from "react";
+import { AuthContext } from "./AuthContext";
+import players from "../players.json";
+
 
 const PlayerBoard = () => {
+    const { user } = useContext(AuthContext);
+    
     const makePick = async (pickData) => {
     try {
         const response = await fetch('/userPick', {
@@ -18,207 +23,35 @@ const PlayerBoard = () => {
     }
 };
 
+    const teams = {};
+    players.forEach((p) => {
+        if (!teams[p.team]) teams[p.team] = [];
+        teams[p.team].push(p);
+    });
+
   return (
-    <div className='playerBoard'>
-        <div className='nflTeam'>
-            <h1>Buffalo Bills</h1>
-            <button className='QB' onClick={() => makePick({username: 'testusername', playerName: 'Josh Allen', team: 'Bills', position: 'QB'})}>Josh Allen</button>
-            <button className='QB'>test</button>
-            <button className='WR'>test</button>
-            <button className='WR'>test</button>
-            <button className='WR'>test</button>
-            <button className='RB'>test</button>
-            <button className='RB'>test</button>
-            <button className='RB'>test</button>
-            <button className='TE'>test</button>
-            <button className='TE'>test</button>
-            <button className='K'>test</button>
-            <button className='DFS'>test</button>
+    <div className="playerBoard">
+      {Object.entries(teams).map(([teamName, teamPlayers]) => (
+        <div key={teamName} className="nflTeam">
+          <h1>{teamName}</h1>
+          {teamPlayers.map((player, index) => (
+            <button
+                key={`${player.name}-${player.position}-${index}`}
+                className={player.position}
+                onClick={() =>
+                makePick({
+                    username: user.name,
+                    playerName: player.name,
+                    team: player.team,
+                    position: player.position
+                })
+                }
+            >
+                {player.name}
+            </button>
+            ))}
         </div>
-        <div className='nflTeam'>
-            <div className='QB'>test</div>
-            <div className='QB'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='TE'>test</div>
-            <div className='TE'>test</div>
-            <div className='K'>test</div>
-            <div className='DFS'>test</div>
-        </div>
-        <div className='nflTeam'>
-            <div className='QB'>test</div>
-            <div className='QB'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='TE'>test</div>
-            <div className='TE'>test</div>
-            <div className='K'>test</div>
-            <div className='DFS'>test</div>
-        </div>
-        <div className='nflTeam'>
-            <div className='QB'>test</div>
-            <div className='QB'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='TE'>test</div>
-            <div className='TE'>test</div>
-            <div className='K'>test</div>
-            <div className='DFS'>test</div>
-        </div>
-        <div className='nflTeam'>
-            <div className='QB'>test</div>
-            <div className='QB'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='TE'>test</div>
-            <div className='TE'>test</div>
-            <div className='K'>test</div>
-            <div className='DFS'>test</div>
-        </div>
-        <div className='nflTeam'>
-            <div className='QB'>test</div>
-            <div className='QB'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='TE'>test</div>
-            <div className='TE'>test</div>
-            <div className='K'>test</div>
-            <div className='DFS'>test</div>
-        </div>
-        <div className='nflTeam'>
-            <div className='QB'>test</div>
-            <div className='QB'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='TE'>test</div>
-            <div className='TE'>test</div>
-            <div className='K'>test</div>
-            <div className='DFS'>test</div>
-        </div>
-        <div className='nflTeam'>
-            <div className='QB'>test</div>
-            <div className='QB'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='TE'>test</div>
-            <div className='TE'>test</div>
-            <div className='K'>test</div>
-            <div className='DFS'>test</div>
-        </div>
-        <div className='nflTeam'>
-            <div className='QB'>test</div>
-            <div className='QB'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='TE'>test</div>
-            <div className='TE'>test</div>
-            <div className='K'>test</div>
-            <div className='DFS'>test</div>
-        </div>
-        <div className='nflTeam'>
-            <div className='QB'>test</div>
-            <div className='QB'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='TE'>test</div>
-            <div className='TE'>test</div>
-            <div className='K'>test</div>
-            <div className='DFS'>test</div>
-        </div>
-        <div className='nflTeam'>
-            <div className='QB'>test</div>
-            <div className='QB'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='TE'>test</div>
-            <div className='TE'>test</div>
-            <div className='K'>test</div>
-            <div className='DFS'>test</div> 
-        </div>
-        <div className='nflTeam'>
-            <div className='QB'>test</div>
-            <div className='QB'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='TE'>test</div>
-            <div className='TE'>test</div>
-            <div className='K'>test</div>
-            <div className='DFS'>test</div>
-        </div>
-        <div className='nflTeam'>
-            <div className='QB'>test</div>
-            <div className='QB'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='TE'>test</div>
-            <div className='TE'>test</div>
-            <div className='K'>test</div>
-            <div className='DFS'>test</div>
-        </div>
-        <div className='nflTeam'>
-            <div className='QB'>test</div>
-            <div className='QB'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='WR'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='RB'>test</div>
-            <div className='TE'>test</div>
-            <div className='TE'>test</div>
-            <div className='K'>test</div>
-            <div className='DFS'>test</div>
-        </div>
-
-
+      ))}
     </div>
   )
 }
