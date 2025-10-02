@@ -99,3 +99,8 @@
 .DFS {
   background-color: beige;
 }
+
+.waitingRoom {
+  min-height: 100vh;
+  background-color: teal;
+}

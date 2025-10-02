@@ -11,6 +11,14 @@ users = []
 currUserIndex = 0
 TotalPicks = numberOfPlayers * 12
 numPicks = 0
+draftStatus = False
+
+@app.route('/getDraftStatus')
+def getDraftStatus():
+    if draftStatus: return jsonify({"status": 'Running'}), 200
+    else: return jsonify({"status": "not-running"}), 200
+
+
 
 @app.route("/addUser", methods=["POST"])
 def addUser():
@@ -19,7 +27,10 @@ def addUser():
 
     users.append(username)
 
-    if len(users) == numberOfPlayers: startDraft(users)
+    if len(users) == numberOfPlayers: 
+        global draftStatus
+        draftStatus = True
+        startDraft(users)
 
     return jsonify({"status": "success"})
 

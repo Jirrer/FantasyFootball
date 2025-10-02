@@ -8,7 +8,7 @@ def createPlayers():
         playerDict = json.load(file)
         for player in playerDict:
             p = Player(player["name"], player["position"], player["team"])
-            players[p] += 2  # 2 copies of each player
+            players[p] += 2 
     return players
 
 availablePlayers = createPlayers()
