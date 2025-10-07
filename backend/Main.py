@@ -43,7 +43,6 @@ def userHasPlayer(userPlayers, pick):
         if player == pick: return True
 
     return False
-    
 
 def openPosition(userPlayers, pickPosition):
     if pickPosition == 'QB': count = 2
@@ -56,7 +55,12 @@ def openPosition(userPlayers, pickPosition):
 
     currCount = 0
     for player in userPlayers:
-        if player['position'] == pickPosition: currCount += 1
+        if player.position == pickPosition: currCount += 1
 
     if currCount >= count: return False
     else: return True
+
+def endDraft():
+    print("draft is done")
+    for key, val in DraftPicks.items():
+        print(f"{key} - {val}")

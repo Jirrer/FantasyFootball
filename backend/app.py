@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from Main import submitPick, startDraft
+from Main import submitPick, startDraft, endDraft
 from Player import Player
 
 app = Flask(__name__)
@@ -41,6 +41,7 @@ def userPick():
     global currUserIndex
     global TotalPicks
     global numPicks
+    global draftStatus
 
     data = request.json
 
@@ -54,7 +55,9 @@ def userPick():
 
             numPicks += 1
 
-            if numPicks == TotalPicks: exit
+            if numPicks == TotalPicks: 
+                draftStatus = False
+                endDraft()
 
             return jsonify({"status": "success", "received": data}), 200
         else: return jsonify({"status": "fail", "reason": "Invalid Pick"}), 200
