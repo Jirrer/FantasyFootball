@@ -47,7 +47,7 @@ const PlayerBoard = () => {
                 })
                 }
             >
-                {player.name}
+                {player.name} - {player.position}
             </button>
             ))}
         </div>

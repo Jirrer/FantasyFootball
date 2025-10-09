@@ -38,8 +38,6 @@ def submitPick(username, pick):
     global availablePlayers
     availablePlayers[pick] -= 1
 
-    print(f"{username} drafts {pick}")
-
     return True
 
 def playerIsAvailable(player):

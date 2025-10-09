@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from Main import submitPick, startDraft, endDraft
+from Main import DraftPicks, submitPick, startDraft, endDraft
 from Player import Player
 from User import User
 
@@ -11,15 +11,13 @@ numberOfPlayers = 1
 users = []
 currUserIndex = 0
 TotalPicks = numberOfPlayers * 12
-numPicks = 0
 draftStatus = False
+draftBoard = []
 
 @app.route('/getDraftStatus')
 def getDraftStatus():
     if draftStatus: return jsonify({"status": 'Running'}), 200
     else: return jsonify({"status": "not-running"}), 200
-
-
 
 @app.route("/addUser", methods=["POST"])
 def addUser():
@@ -27,10 +25,6 @@ def addUser():
 
     username = data.get('username')
     email = data.get('email')
-
-    print(username)
-    print(email)
-
 
     users.append(User(username, email))
 
@@ -47,7 +41,6 @@ def userPick():
     global users
     global currUserIndex
     global TotalPicks
-    global numPicks
     global draftStatus
 
     data = request.json
@@ -60,9 +53,9 @@ def userPick():
             if currUserIndex == (len(users) - 1): currUserIndex = 0
             else: currUserIndex += 1
 
-            numPicks += 1
+            draftBoard.append((username, (f"{pick.name} | {pick.position} | {pick.team}")))
 
-            if numPicks == TotalPicks: 
+            if len(draftBoard) == TotalPicks: 
                 draftStatus = False
                 endDraft(users)
 
@@ -70,6 +63,23 @@ def userPick():
         else: return jsonify({"status": "fail", "reason": "Invalid Pick"}), 200
 
     return jsonify({"status": "fail", "reason": "Not Players Turn"}), 200
+
+@app.route('/pullDraftResults')
+def sendDraftResults():
+    return jsonify({'picks': draftBoard}), 200
+
+@app.route('/pullUserTeam', methods=["POST"])
+def sendUserTeam():
+    data = request.json
+    username = data.get('username')
+
+    user_picks = DraftPicks.get(username, [])
+
+    picks_serializable = [
+        {"name": p.name, "position": p.position, "team": p.team} for p in user_picks
+    ]
+
+    return jsonify({'picks': picks_serializable}), 200
 
 
 

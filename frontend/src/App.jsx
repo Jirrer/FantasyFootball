@@ -13,20 +13,24 @@ function AppContent() {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
+    let interval; // keep interval reference here
+
     const checkDraftStatus = async () => {
       const res = await fetch("/getDraftStatus");
       const data = await res.json();
+
       if (data.status === "Running") {
-          setDraftStarted(true);
+        setDraftStarted(true);
+        clearInterval(interval); 
       } else {
-          setDraftStarted(false); // still 200, no red error in console
+        setDraftStarted(false);
       }
     };
 
-    const interval = setInterval(checkDraftStatus, 5000);
+    interval = setInterval(checkDraftStatus, 5000);
     checkDraftStatus(); // run once on mount
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval); // cleanup on unmount
   }, []);
 
   // If not logged in → only show PreDraft
