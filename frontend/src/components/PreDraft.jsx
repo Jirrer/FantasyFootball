@@ -50,25 +50,27 @@ export default function PreDraft() {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ textAlign: "center" }}>
-      <h2>Login</h2>
-      <input
-        type="text"
-        placeholder="Enter username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        disabled={loading}
-      />
-      <input
-        type="text"
-        placeholder="Enter Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        disabled={loading}
-      />
-      <button type="submit" disabled={loading}>
-        {loading ? "Logging in..." : "Login"}
-      </button>
-    </form>
+    <div className="preDraft">
+      <form onSubmit={handleSubmit} style={{ textAlign: "center" }}>
+        <h1>Join draft</h1>
+        <input
+          type="text"
+          placeholder="Enter Name"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          disabled={loading}
+        />
+        <input
+          type="text"
+          placeholder="Enter Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
+      </form>
+    </div>
   );
 }
