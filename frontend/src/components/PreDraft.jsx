@@ -3,6 +3,7 @@ import { AuthContext } from "./AuthContext";
 
 export default function PreDraft() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const { user, login, logout } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
@@ -17,7 +18,7 @@ export default function PreDraft() {
       const response = await fetch("/addUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username }), // match backend key
+        body: JSON.stringify({ username, email }), // match backend key
       });
 
       const data = await response.json();
@@ -56,6 +57,13 @@ export default function PreDraft() {
         placeholder="Enter username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        disabled={loading}
+      />
+      <input
+        type="text"
+        placeholder="Enter Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
         disabled={loading}
       />
       <button type="submit" disabled={loading}>

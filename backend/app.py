@@ -1,12 +1,13 @@
 from flask import Flask, request, jsonify
 from Main import submitPick, startDraft, endDraft
 from Player import Player
+from User import User
 
 app = Flask(__name__)
 
 # To-Do: make code that can create the json well
 
-numberOfPlayers = 2
+numberOfPlayers = 1
 users = []
 currUserIndex = 0
 TotalPicks = numberOfPlayers * 12
@@ -23,9 +24,15 @@ def getDraftStatus():
 @app.route("/addUser", methods=["POST"])
 def addUser():
     data = request.json
-    username = data.get('username')
 
-    users.append(username)
+    username = data.get('username')
+    email = data.get('email')
+
+    print(username)
+    print(email)
+
+
+    users.append(User(username, email))
 
     if len(users) == numberOfPlayers: 
         global draftStatus
@@ -47,7 +54,7 @@ def userPick():
 
     username = data.get('username')
 
-    if users[currUserIndex] == username:
+    if users[currUserIndex].username == username:
         pick = Player(data.get('playerName'), data.get('position'), data.get('team'))
         if (submitPick(username, pick)): 
             if currUserIndex == (len(users) - 1): currUserIndex = 0
@@ -57,7 +64,7 @@ def userPick():
 
             if numPicks == TotalPicks: 
                 draftStatus = False
-                endDraft()
+                endDraft(users)
 
             return jsonify({"status": "success", "received": data}), 200
         else: return jsonify({"status": "fail", "reason": "Invalid Pick"}), 200
