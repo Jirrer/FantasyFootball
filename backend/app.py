@@ -1,11 +1,11 @@
 from flask import Flask, request, jsonify
-from Main import DraftPicks, submitPick, startDraft, endDraft
+from Main import DraftPicks, submitPick, startDraft, endDraft, getNonAvailablePlayers
 from Player import Player
 from User import User
 
 app = Flask(__name__)
 
-# To-Do: make code that can create the json well
+# To-Do: need to handle end of the draft
 
 numberOfPlayers = 1
 users = []
@@ -80,6 +80,16 @@ def sendUserTeam():
     ]
 
     return jsonify({'picks': picks_serializable}), 200
+
+@app.route('/getAvailablePlayers', methods=["POST"])
+def sendAvailablePlayers():
+    data = request.json
+    username = data.get("username")
+    print("test")
+
+    nonAvailablePlayers = getNonAvailablePlayers(username)
+    
+    return jsonify({"NonAvailablePlayers": nonAvailablePlayers}), 200
 
 
 

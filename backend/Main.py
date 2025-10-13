@@ -8,6 +8,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 
+
 load_dotenv()
 
 def createPlayers():
@@ -27,11 +28,7 @@ def startDraft(usersInput):
         DraftPicks[user.username] = []
 
 def submitPick(username, pick): 
-    userPicks = DraftPicks[username]
-
-    if not playerIsAvailable(pick): return False
-    if userHasPlayer(userPicks, pick): return False
-    if not openPosition(userPicks, pick.position): return False
+    if not isAvailablePlayer(username, pick): return False
 
     DraftPicks[username].append(pick)
     
@@ -39,6 +36,23 @@ def submitPick(username, pick):
     availablePlayers[pick] -= 1
 
     return True
+
+def isAvailablePlayer(username, pick):
+    userPicks = DraftPicks[username]
+
+    if not playerIsAvailable(pick): return False
+    if userHasPlayer(userPicks, pick): return False
+    if not openPosition(userPicks, pick.position): return False
+
+    return True
+
+def getNonAvailablePlayers(username):
+    nonAvailable = []
+    
+    for player in availablePlayers:
+        if not isAvailablePlayer(username, player): nonAvailable.append(player)
+
+    return json.dumps([p.__dict__ for p in nonAvailable])
 
 def playerIsAvailable(player):
     if availablePlayers[player] > 0: return True
@@ -79,7 +93,7 @@ def sendEmail(email, user):
     message = generateEmailMessage(user)
 
     msg = MIMEMultipart()
-    msg["Subject"] = f"Screen Time Report"
+    msg["Subject"] = f"Fantasy Football Draft Report"
     msg["To"] = email
     msg["From"] = scriptUserName
 

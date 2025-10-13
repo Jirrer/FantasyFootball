@@ -43,6 +43,16 @@
   grid-template-columns: repeat(7, 1fr);  /* need to change this if mobile  */
 }
 
+.playerBoard button.unavailable-player {
+  background-color: #cccccc;
+  color: #666666;
+  border: 1px solid #999999;
+  opacity: 0.6;
+  cursor: not-allowed; /* changes cursor to "disabled" icon */
+  pointer-events: none; /* optional: completely disable clicking */
+}
+
+
 @media (max-width: 800px) {
   .playerBoard {
     grid-template-columns: repeat(2, 1fr); /* 2 columns on small screens */
