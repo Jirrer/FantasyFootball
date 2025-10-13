@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # To-Do: need to handle end of the draft
 
-numberOfPlayers = 1
+numberOfPlayers = 3
 users = []
 currUserIndex = 0
 TotalPicks = numberOfPlayers * 12
@@ -85,7 +85,6 @@ def sendUserTeam():
 def sendAvailablePlayers():
     data = request.json
     username = data.get("username")
-    print("test")
 
     nonAvailablePlayers = getNonAvailablePlayers(username)
     

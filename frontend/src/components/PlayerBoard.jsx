@@ -60,6 +60,8 @@ const PlayerBoard = () => {
     teams[p.team].push(p);
   });
 
+  ///////// make the butons a different color and unclickable when its not your turn
+
   return (
     <div className="playerBoard">
       {Object.entries(teams).map(([teamName, teamPlayers]) => (
