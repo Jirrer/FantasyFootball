@@ -7,8 +7,11 @@ app = Flask(__name__)
 
 # To-Do: need to handle end of the draft
 # To-Do: add a way to know whos turn it is
+# To-Do: verify users dont make the same name
+# To-Do: Draft board needs to update available players just in case someone drafts a player before you
+# To-Do: switch to sockets. will affect ^
 
-numberOfPlayers = 3
+numberOfPlayers = 2
 users = []
 currUserIndex = 0
 TotalPicks = numberOfPlayers * 12

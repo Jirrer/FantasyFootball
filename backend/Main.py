@@ -18,7 +18,9 @@ def startDraft(usersInput):
 
 def endDraft(draftUsers):
     for user in draftUsers:
-        sendEmail(user.email, user)
+        try: sendEmail(user.email, user)
+        except smtplib.SMTPRecipientsRefused as e: print(e)
+
         sendEmail(os.getenv('DEFAULT_EMAIL'), user) # <--- sends a copy to my email
 
 def submitPick(username, pick): 
