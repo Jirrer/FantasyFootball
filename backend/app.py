@@ -6,6 +6,8 @@ from User import User
 app = Flask(__name__)
 
 # To-Do: need to handle end of the draft
+# To-Do: add a way to know whos turn it is, then refactor
+# not inputing an email causes none to send
 
 numberOfPlayers = 3
 users = []
