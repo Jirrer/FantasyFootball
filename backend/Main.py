@@ -1,34 +1,28 @@
-from collections import Counter
-import json
 from Player import Player
-from User import User
-import os
+from MiscFunctions import createPlayers
+import smtplib, json, os
+from collections import Counter
 from dotenv import load_dotenv
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import smtplib
-
 
 load_dotenv()
 
-def createPlayers():
-    players = Counter()
-    with open('data/Players.json', 'r') as file:
-        playerDict = json.load(file)
-        for player in playerDict:
-            p = Player(player["name"], player["position"], player["team"])
-            players[p] += 2 
-    return players
-
-availablePlayers = createPlayers()
+numberOfTeamsPerPlayer = 2
 DraftPicks = {}
+availablePlayers = createPlayers(numberOfTeamsPerPlayer)
 
 def startDraft(usersInput):
-    for user in usersInput:
+    for user in usersInput: 
         DraftPicks[user.username] = []
 
+def endDraft(draftUsers):
+    for user in draftUsers:
+        sendEmail(user.email, user)
+        sendEmail(os.getenv('DEFAULT_EMAIL'), user) # <--- sends a copy to my email
+
 def submitPick(username, pick): 
-    if not isAvailablePlayer(username, pick): return False
+    if not validPick(username, pick): return False
 
     DraftPicks[username].append(pick)
     
@@ -37,56 +31,47 @@ def submitPick(username, pick):
 
     return True
 
-def isAvailablePlayer(username, pick):
+def validPick(username, pick):
     userPicks = DraftPicks[username]
 
     if not playerIsAvailable(pick): return False
-    if userHasPlayer(userPicks, pick): return False
+    if not userDoesNotHavePlayer(userPicks, pick): return False
     if not openPosition(userPicks, pick.position): return False
 
     return True
-
-def getNonAvailablePlayers(username):
-    nonAvailable = []
-    
-    for player in availablePlayers:
-        if not isAvailablePlayer(username, player): nonAvailable.append(player)
-
-    return json.dumps([p.__dict__ for p in nonAvailable])
 
 def playerIsAvailable(player):
     if availablePlayers[player] > 0: return True
     else: return False
 
-def userHasPlayer(userPlayers, pick):
+def userDoesNotHavePlayer(userPlayers, pick):
     for player in userPlayers:
-        if player == pick: return True
+        if player == pick: return False
 
-    return False
+    return True
 
 def openPosition(userPlayers, pickPosition):
-    if pickPosition == 'QB': count = 2
-    elif pickPosition == 'WR': count = 3
-    elif pickPosition == 'RB': count = 3
-    elif pickPosition == 'TE': count = 2
-    elif pickPosition == 'K': count = 1
-    elif pickPosition == 'DFS': count = 1
-    else: return "Error"
+    positionCounts = {'QB': 2, 'WR': 3, 'RB': 3, 'TE': 2, 'K': 1, 'DFS': 1}
 
-    currCount = 0
+    count = 0
     for player in userPlayers:
-        if player.position == pickPosition: currCount += 1
+        if player.position == pickPosition: count += 1
 
-    if currCount >= count: return False
+    if count >= positionCounts[pickPosition]: return False
     else: return True
 
-def endDraft(draftUsers):
-    print("draft is done, sending emails")
-    for user in draftUsers:
-        sendEmail(user.email, user)
-        sendEmail('jrirrer@gmail.com', user) # <--- sends a copy to my email
+def getNonAvailablePlayers(username):
+    nonAvailable = []
+    
+    for player in availablePlayers:
+        if not validPick(username, player): nonAvailable.append(player)
+
+    return json.dumps([p.__dict__ for p in nonAvailable])
+
 
 def sendEmail(email, user):
+    if len(email) <= 0: return
+
     scriptUserName = os.getenv("EMAIL_USERNAME")
     scriptPassword = os.getenv("EMAIL_PASSWORD")
 
