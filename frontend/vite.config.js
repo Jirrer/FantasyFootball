@@ -8,37 +8,37 @@ export default defineConfig({
     allowedHosts: true,
     proxy: { 
       '/userPick': { 
-        target: 'http://127.0.0.1:5000',
+        target: 'http://127.0.0.1:5001',
         changeOrigin: true,
         secure: false,
       },
 
       '/addUser': { 
-        target: 'http://127.0.0.1:5000',
+        target: 'http://127.0.0.1:5001',
         changeOrigin: true,
         secure: false,
       },
 
       '/getDraftStatus':{
-        target: 'http://127.0.0.1:5000',
+        target: 'http://127.0.0.1:5001',
         changeOrigin: true,
         secure: false,
       },
 
       '/pullDraftResults':{
-        target: 'http://127.0.0.1:5000',
+        target: 'http://127.0.0.1:5001',
         changeOrigin: true,
         secure: false,
       },
 
       '/pullUserTeam':{
-        target: 'http://127.0.0.1:5000',
+        target: 'http://127.0.0.1:5001',
         changeOrigin: true,
         secure: false,
       },
 
       '/getAvailablePlayers':{
-        target: 'http://127.0.0.1:5000',
+        target: 'http://127.0.0.1:5001',
         changeOrigin: true,
         secure: false,
       }

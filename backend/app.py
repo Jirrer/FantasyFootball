@@ -1,101 +1,95 @@
-from Main import DraftPicks, submitPick, startDraft, endDraft, getNonAvailablePlayers
-from flask import Flask, request, jsonify
-from Player import Player
-from User import User
+import os, random, string
+
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-# To-Do: need to handle end of the draft
-# To-Do: add a way to know whos turn it is
-# To-Do: verify users dont make the same name
-# To-Do: Draft board needs to update available players just in case someone drafts a player before you
-# To-Do: switch to sockets. will affect ^
+class Player:
+    def __init__(self, key: str):
+        self.key = key
 
-numberOfPlayers = 2
-users = []
-currUserIndex = 0
-TotalPicks = numberOfPlayers * 12
-draftIsRunning = False
-draftBoard = []
+    def __hash__(self):
+        return hash(self.key)
 
-@app.route('/getDraftStatus')
-def getDraftStatus():
-    if draftIsRunning: return jsonify({"status": 'Running'}), 200
-    else: return jsonify({"status": "not-running"}), 200
-
-@app.route("/addUser", methods=["POST"])
-def addUser():
-    data = request.json
-
-    username, email = data.get('username'), data.get('email')
-
-    users.append(User(username, email))
-
-    if len(users) == numberOfPlayers: 
-        global draftIsRunning
-        draftIsRunning = True
-
-        startDraft(users)
-
-    return jsonify({"status": "success"}), 200
-
-
-@app.route("/userPick", methods=["POST"])
-def userPick():
-    data = request.json
-
-    username = data.get('username')
-
-    if not users[currUserIndex].username == username: 
-        return jsonify({"status": "fail", "reason": "Not Players Turn"}), 200
+class Draft:
+    def __init__(self, key: str):
+        self.key = key
+        self.players: list[Player] = []
     
-    pick = Player(data.get('playerName'), data.get('position'), data.get('team'))
-
-    if not (submitPick(username, pick)): 
-        return jsonify({"status": "fail", "reason": "Invalid Pick"}), 200
+    def __hash__(self):
+        return hash(self.key)
     
-    draftBoard.append((username, (f"{pick.name} | {pick.position} | {pick.team}")))
+    def addPlayer(self, newPlayer: Player) -> bool:
+        if len(self.players) <= 12:
+            self.players.append(newPlayer)
+            return True
+        
+        else:
+            return False
 
-    if len(draftBoard) == TotalPicks: 
-        global draftIsRunning
-        draftIsRunning = False
-
-        endDraft(users)
-
-    movePlayerIndex()
-    return jsonify({"status": "success", "received": data}), 200
-
-def movePlayerIndex():
-    global currUserIndex
-
-    if currUserIndex == (len(users) - 1): currUserIndex = 0
-    else: currUserIndex += 1
+drafts: list[Draft] = []
 
 
-@app.route('/pullDraftResults')
-def sendDraftResults():
-    return jsonify({'picks': draftBoard}), 200
+@app.route('/start-draft')
+def startDraft():
+    characters = string.ascii_letters + string.digits
 
-@app.route('/pullUserTeam', methods=["POST"])
-def sendUserTeam():
+    while (True):
+        newDraftKey = ''.join(random.choices(characters, k=16))
+        
+        if newDraftKey in set(drafts): continue 
+
+        drafts.append(Draft(newDraftKey))
+        
+        break
+
+    return jsonify({"message": "Draft started", "key": newDraftKey}), 200
+
+@app.route('/add-player', methods=["post"])
+def addPlayer():
     data = request.json
-    username = data.get('username')
 
-    picks = DraftPicks.get(username, [])
+    draftKey = data.get('draftKey')
 
-    serializablePicks = [
-        {"name": p.name, "position": p.position, "team": p.team} for p in picks
-    ]
-
-    return jsonify({'picks': serializablePicks}), 200
-
-@app.route('/getAvailablePlayers', methods=["POST"])
-def sendAvailablePlayers():
-    data = request.json
-    username = data.get("username")
-
-    nonAvailablePlayers = getNonAvailablePlayers(username)
+    if not draftKey:
+        return jsonify({"status": "fail", "reason": "Null draft key"}), 404
     
-    return jsonify({"NonAvailablePlayers": nonAvailablePlayers}), 200
+    foundDraft = False
+    
+    # To-Do: implement search algo
+    for draft in drafts:
+        if draft.key != draftKey: continue
 
-if __name__ == "__main__": app.run(debug=True) 
+        foundDraft = True
+
+        characters = string.ascii_letters + string.digits
+
+        while(True):
+            newPlayerKey = ''.join(random.choices(characters, k=16))
+
+            if newPlayerKey in set(draft.players): continue
+
+            if not draft.addPlayer(Player(newPlayerKey)): 
+                return jsonify({"status": "fail", "reason": "Draft is full"}), 404  
+
+            break
+
+    if foundDraft == False:
+        return jsonify({"status": "fail", "reason": "Draft Key does not exist"}), 404 
+
+    showDraftState()
+
+    return jsonify({"message": "Player Added", "key": newPlayerKey}), 200
+
+
+def showDraftState():
+    for draft in drafts:
+        print(draft.key)
+        
+        for p in draft.players:
+            print(f"\t{p}")
+
+if __name__ == "__main__":
+    host = os.getenv("FLASK_RUN_HOST", "127.0.0.1")
+    port = int(os.getenv("FLASK_RUN_PORT", "5001"))
+    app.run(debug=True, host=host, port=port)
