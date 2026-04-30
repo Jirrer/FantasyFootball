@@ -1,5 +1,0 @@
-
-
-
-def checkForPlayer():
-    pass
