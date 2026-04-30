@@ -19,6 +19,6 @@ def checkForPlayer(pick: "Pick"):
         cursor = connection.cursor()
         cursor.execute(
             "SELECT name, position, team FROM Players WHERE name = ? AND position = ? AND team = ?",
-            (pick.name, pick.position.name, pick.team.name),
+            (pick.name, pick.position.name.upper(), pick.team.name.upper()),
         )
         return cursor.fetchone() is not None

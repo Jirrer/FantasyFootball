@@ -1,5 +1,5 @@
 import os, random, string, enum
-import database
+import backend.database as database
 from flask import Blueprint, jsonify, request
 
 bp = Blueprint('draft', __name__)
@@ -74,6 +74,7 @@ class Draft:
         self.players: list[Player] = []
         self.round:int = 0
         self.playerOnTheClock:int = 0
+        self.seenPlayers: dict[str:int] = {}
     
     def __hash__(self):
         return hash(self.key)
@@ -104,6 +105,14 @@ class Draft:
             if player.key == newPlayer.key:
                 if self.playerOnTheClock != self.players.index(player): return False
                 if len([p.position for p in player.team if p.position == pick.position]) >= pick.position.value: return False
+
+                if pick in self.seenPlayers and self.seenPlayers[pick] >= 2: return False
+
+                if pick in player.team: return False #To-Do: fix
+
+                if pick in self.seenPlayers: self.seenPlayers[pick] += 1
+
+                else: self.seenPlayers[pick] = 1
 
                 player.team.append(pick)
 
@@ -150,8 +159,8 @@ def addPlayer():
         characters = string.ascii_letters + string.digits
 
         while(True):
-            # newPlayerKey = ''.join(random.choices(characters, k=16))
-            newPlayerKey = "devPlayerKey"
+            newPlayerKey = ''.join(random.choices(characters, k=16))
+            # newPlayerKey = "devPlayerKey"
 
             if newPlayerKey in {p.key for p in draft.players}: continue
 
