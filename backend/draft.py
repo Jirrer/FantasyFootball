@@ -57,7 +57,7 @@ class Pick:
         return (f"{self.name} | {self.position.name} | {self.team.name}")
         
 class Player:
-    def __init__(self, key: str, name: str):
+    def __init__(self, key: str, name: str): # To-Do: update key to token
         self.key = key
         self.team: list[Pick] = []
         self.name = name
@@ -78,6 +78,13 @@ class Draft:
     
     def __hash__(self):
         return hash(self.key)
+    
+    def __repr__(self):
+        return self.key
+    
+    def __eq__(self, value):
+        return self.key == value
+        
     
     def addPlayer(self, newPlayer: Player) -> bool:
         if len(self.players) <= 12 and self.round == 0:
@@ -122,21 +129,22 @@ class Draft:
 
 drafts: list[Draft] = []
 
-@bp.route('/create-draft')
+@bp.route('/open-draft', methods=["post"])
 def createDraft():
-    characters = string.ascii_letters + string.digits
+    data = request.json
 
-    while (True):
-        newDraftKey = ''.join(random.choices(characters, k=16))
-        # newDraftKey = "devDraftKey"
-        
-        if newDraftKey in set(drafts): continue 
+    groupKey = data.get('groupKey')
+    userName = data.get('userName')
 
-        drafts.append(Draft(newDraftKey))
-        
-        break
+    if not database.checkIfAdmin(groupKey, userName):
+        return jsonify({"status": "fail", "message": "you cannot open this draft"}), 403
 
-    return jsonify({"message": "Draft started", "key": newDraftKey}), 200
+    if groupKey in set(drafts):
+        return jsonify({"status": "fail", "message": "draft is already open"}), 403
+    
+    drafts.append(Draft(groupKey))
+
+    return jsonify({"status": "success"}), 200
 
 @bp.route('/join-draft', methods=["post"])
 def joinDraft():
@@ -148,31 +156,18 @@ def joinDraft():
     if not draftKey or not userName:
         return jsonify({"status": "fail", "reason": "Null draft key or user name"}), 404
     
-    foundDraft = False
+    if not database.checkIfGroupExists(draftKey):
+        return jsonify({'status': "fail", 'message': "Group does not exist"}), 403
+
+    for d in drafts: #To-Do: refactor
+        if d.key == draftKey:
+            token = 'test'
+            d.addPlayer(Player(token, userName))
+
+        if d.round == 0: return jsonify({"message": "Player Added", "key": token}), 200
+        else: return jsonify({"message": "Player Joined", "key": token}), 200
     
-    # To-Do: implement search algo
-    for draft in drafts:
-        if draft.key != draftKey: continue
-
-        foundDraft = True
-
-        characters = string.ascii_letters + string.digits
-
-        while(True):
-            newPlayerKey = ''.join(random.choices(characters, k=16))
-            # newPlayerKey = "devPlayerKey"
-
-            if newPlayerKey in {p.key for p in draft.players}: continue
-
-            if not draft.addPlayer(Player(newPlayerKey, userName)): 
-                return jsonify({"status": "fail", "reason": "Draft is full or has started"}), 404  
-
-            break
-
-    if foundDraft == False:
-        return jsonify({"status": "fail", "reason": "Draft Key does not exist"}), 404 
-
-    return jsonify({"message": "Player Added", "key": newPlayerKey}), 200
+    return jsonify({'status': "fail", 'message': "could not find draft"}), 404
 
 
 @bp.route("/start-draft", methods=["post"])
@@ -180,6 +175,7 @@ def startDraft():
     data = request.json
 
     draftKey = data.get('draftKey')
+    userToken = data.get('userToken') #create token
 
     if not draftKey:
         return jsonify({"status": "fail", "reason": "Null draft key"}), 404
@@ -189,13 +185,18 @@ def startDraft():
 
         if not len(draft.players):
             return jsonify({"status": "fail - empty draft"}), 403
+        
+        if not database.checkIfAdmin(draftKey, 'John'): #hard coded as admin
+            return jsonify({"status": "Fail", 'message': 'you do not have the writes to start draft'}), 200
+
+
+        # to-do: add check if player is even in the draft
+
 
         if draft.round == 0:
             draft.round = 1
 
-            return jsonify({"status": "Success - draft started"}), 200 
-        
-    return jsonify({"status": "fail"}), 403 
+    return jsonify({"status": "Success - draft started"}), 200
 
 @bp.route("/add-pick", methods=["post"])
 def addPick():

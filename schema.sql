@@ -2,15 +2,15 @@ CREATE TABLE Players(name text, position text, team text);
 CREATE TABLE groups (
   id        INTEGER PRIMARY KEY AUTOINCREMENT,
   key       TEXT    NOT NULL UNIQUE,
-  password  TEXT    NOT NULL,
+  password  TEXT,
   drafted   BOOLEAN NOT NULL DEFAULT false
 );
 CREATE TABLE sqlite_sequence(name,seq);
 CREATE TABLE users (
   id       INTEGER PRIMARY KEY AUTOINCREMENT,
-  key      TEXT    NOT NULL UNIQUE,
-  username TEXT    NOT NULL,
-  email    TEXT    NOT NULL UNIQUE
+  username TEXT    NOT NULL UNIQUE,
+  password TEXT    NOT NULL,
+  email    TEXT    UNIQUE
 );
 CREATE TABLE user_group_membership (
   id      INTEGER PRIMARY KEY AUTOINCREMENT,

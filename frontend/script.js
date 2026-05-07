@@ -24,19 +24,26 @@ function showDraftPage() {
     document.getElementById(pageId).style.display = 'block';
 }
 
-async function createDraft(userName) {
+async function openDraft(groupKey, username) {
     try {
-        const response = await fetch(`${API_URL}/create-draft`);
+        const response = await fetch(`${API_URL}/open-draft`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({userName: username, groupKey: groupKey})
+        });
 
         if (!response.ok) {
             throw new Error(response.status);
+        } else {
+            console.log("draft open");
         }
 
-        const data = await response.json();
         
-        joinDraft(data.key, userName);
+        
     } catch (error) {
-        console.error(`Error creating draft - ${error}`)
+        console.error(`Error opening draft - ${error}`)
     }
 }
 
@@ -52,26 +59,34 @@ async function joinDraft(draftKey, userName) {
 
         if (!response.ok) {
             if (response.status == 404) {
-                document.getElementById('joinResults').innerHTML = "Could not find draft";
+                document.getElementById('joinResults').innerHTML = "Could not join draft";
+            } else {
+                document.getElementById('joinResults').innerHTML = "Joined draft";
             }
+        } 
 
-            throw new Error(response.status);
-        } else {
-            document.getElementById('joinResults').innerHTML = "Joined draft";
-        }
-
+        
+        
         const data = await response.json();
         sessionStorage.setItem('draftKey', draftKey);
         sessionStorage.setItem('userName', userName);
-        sessionStorage.setItem('playerKey', data.key); // backend returns "key"
+        sessionStorage.setItem('playerKey', data.key); 
 
-        sessionStorage.setItem('page', 'waitingRoom')
+        console.log(data.message)
 
-        showPage();
+        if (data.message === "Player Added") {
+            sessionStorage.setItem('page', 'waitingRoom')
+            showPage();
 
-        sessionStorage.setItem('draftPage', 'draftBoard');
+        } else if (data.message === "Player Joined") {
+            sessionStorage.setItem('page', 'draftPage')
+            showPage();
 
-        showDraftPage();
+        } else {
+            throw new Error("Error");
+        }
+        
+        
     } catch (error) {       
         console.error(`Error joining draft - ${error}`);
         
@@ -99,6 +114,8 @@ async function sendPick(playerTeam, playerPosition, playerName) {
     const draftKey = sessionStorage.getItem('draftKey');
     const userKey = sessionStorage.getItem('playerKey');
 
+    console.log(playerTeam)
+
     try {
         const response = await fetch(`${API_URL}/add-pick`, {
             method: 'POST',
@@ -115,6 +132,40 @@ async function sendPick(playerTeam, playerPosition, playerName) {
         const data = await response.json()
 
         console.log(data);
+
+
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function startDraft() {
+    const groupKey = sessionStorage.getItem('draftKey');
+    const userToken = sessionStorage.getItem('userKey');
+
+    try {
+        const response = await fetch (`${API_URL}/start-draft`, {
+            method: 'POST',
+            headers: {"Content-Type": 'application/json'},
+            body: JSON.stringify({
+                draftKey: groupKey,
+                userToken: userToken,
+            })
+        });
+
+
+        if (response.ok) {
+            sessionStorage.setItem('page', 'draftPage')
+            showPage();
+
+            sessionStorage.setItem('draftPage', 'draftBoard');
+            showDraftPage();
+
+
+        } else {
+            console.error(response);
+        }
 
 
 

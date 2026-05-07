@@ -22,3 +22,40 @@ def checkForPlayer(pick: "Pick"):
             (pick.name, pick.position.name.upper(), pick.team.name.upper()),
         )
         return cursor.fetchone() is not None
+    
+def checkIfGroupExists(groupKey: str):
+    database_location = os.getenv('DATABASE_LOCATION')
+
+    if not database_location:
+        return False
+    
+    with sqlite3.connect(database_location) as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            "SELECT 1 FROM groups WHERE key = ?",
+            (groupKey,),
+        )
+        return cursor.fetchone() is not None
+
+def checkIfAdmin(groupKey, username):
+    database_location = os.getenv('DATABASE_LOCATION')
+
+    if not database_location:
+        return False
+    
+    with sqlite3.connect(database_location) as connection:
+        cursor = connection.cursor()
+
+        membership = cursor.execute('''
+            SELECT m.role
+            FROM user_group_membership m
+            JOIN groups g ON g.id = m.groupID
+            JOIN users  u ON u.id = m.userID
+            WHERE g.key    = ?
+            AND   u.username = ?
+        ''', (groupKey, username)).fetchone()
+
+        if not membership: return False
+        if not len(membership): return False
+        return membership[0] == 'admin' 
+

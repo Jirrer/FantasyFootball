@@ -8,9 +8,12 @@
 </head>
 <body>
     <div class="page" id="join_create">
-        <button onclick="createDraft(
-            document.getElementById('userNameInput').value
-        )">Create Draft</button>
+        <button onclick="openDraft(
+            document.getElementById('openDraftInput').value,
+            document.getElementById('openUserNameInput').value,
+        )">Open Draft</button>
+        <input id="openDraftInput" placeholder="Draft key">
+        <input id="openUserNameInput" placeholder="User name">
         <button onclick="joinDraft(
           document.getElementById('draftKeyInput').value,
           document.getElementById('userNameInput').value
@@ -20,7 +23,7 @@
         <p id="joinResults"></p>
     </div>
     <div class="page" id="waitingRoom">
-        
+        <button onclick="startDraft()">Start Draft</button>
     </div>
     <div class="page" id="draftPage">
         <nav>
@@ -36,9 +39,9 @@
             <input id="positionInput" placeholder="enter position">
             <input id="teamInput" placeholder="enter team">
             <button onclick="sendPick(
-                document.getElementById('nameInput').value,
+                document.getElementById('teamInput').value,
                 document.getElementById('positionInput').value,
-                document.getElementById('teamInput').value
+                document.getElementById('nameInput').value,
             )">
                 add pick
             </button>
