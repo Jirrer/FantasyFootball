@@ -10,7 +10,7 @@
     <div class="page" id="join_create">
         <button onclick="createDraft(
             document.getElementById('userNameInput').value
-        )">Create Dfraft</button>
+        )">Create Draft</button>
         <button onclick="joinDraft(
           document.getElementById('draftKeyInput').value,
           document.getElementById('userNameInput').value
@@ -19,19 +19,31 @@
         <input id="userNameInput" placeholder="User name">
         <p id="joinResults"></p>
     </div>
+    <div class="page" id="waitingRoom">
+        
+    </div>
     <div class="page" id="draftPage">
         <nav>
-            <button onclick="showDraftPage('userPlayers')">My Players</button>
-            <button onclick="showDraftPage('draftBoard')">Draft Board</button>
-            <button onclick="showDraftPage('pickBoard')">Picks</button>
+            <button onclick="goToMyPlayers()">My Players</button>
+            <button onclick="goToDraftBoard()">Draft Board</button>
+            <button onclick="goToPicks()">Picks</button>
         </nav>
         <div class="draftPage" id="userPlayers">
             userPlayers
         </div>
         <div class="draftPage" id="draftBoard">
-            draft Board
+            <input id="nameInput" placeholder="enter name">
+            <input id="positionInput" placeholder="enter position">
+            <input id="teamInput" placeholder="enter team">
+            <button onclick="sendPick(
+                document.getElementById('nameInput').value,
+                document.getElementById('positionInput').value,
+                document.getElementById('teamInput').value
+            )">
+                add pick
+            </button>
         </div>
-        <div class="draftPage" id="pickBoard">
+        <div class="draftPage" id="picksBoard">
             pick board
         </div>
     </div>
