@@ -1,0 +1,85 @@
+{
+  "tables": [
+    {
+      "id": "oH6gRupjNgaRfwmdpbL7M",
+      "name": "groups",
+      "x": 3.3333129882811363,
+      "y": -62.666656494140625,
+      "locked": false,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "7rx2S_utfI4K_GiKFQ3R-"
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#175e7a"
+    },
+    {
+      "id": "3X3JD9cwJ2iSfapVDNagg",
+      "name": "users",
+      "x": -359.9999694824219,
+      "y": -107.33331298828125,
+      "locked": false,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "2Om6g372QrR1apjJ_68F5"
+        },
+        {
+          "id": "sTyKq8fGGse-hJGuLz0fJ",
+          "name": "username",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        },
+        {
+          "id": "4DtQJG0UHKBIJkXp5PqwA",
+          "name": "email",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#175e7a"
+    }
+  ],
+  "relationships": [],
+  "notes": [],
+  "subjectAreas": [],
+  "database": "sqlite",
+  "title": "Fantasy Football"
+}
