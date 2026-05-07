@@ -1,26 +1,26 @@
-CREATE TABLE IF NOT EXISTS "groups" (
-	"id" INTEGER NOT NULL,
-	"key" TEXT NOT NULL UNIQUE,
-	"password" TEXT NOT NULL,
-	"drafted" BOOLEAN NOT NULL,
-	PRIMARY KEY("id")
+CREATE TABLE Players(name text, position text, team text);
+CREATE TABLE groups (
+  id        INTEGER PRIMARY KEY AUTOINCREMENT,
+  key       TEXT    NOT NULL UNIQUE,
+  password  TEXT    NOT NULL,
+  drafted   BOOLEAN NOT NULL DEFAULT false
 );
-
-CREATE TABLE IF NOT EXISTS "users" (
-	"id" INTEGER NOT NULL,
-	"username" TEXT NOT NULL UNIQUE,
-	"email" TEXT,
-	PRIMARY KEY("id")
+CREATE TABLE sqlite_sequence(name,seq);
+CREATE TABLE users (
+  id       INTEGER PRIMARY KEY AUTOINCREMENT,
+  key      TEXT    NOT NULL UNIQUE,
+  username TEXT    NOT NULL,
+  email    TEXT    NOT NULL UNIQUE
 );
-
-CREATE TABLE IF NOT EXISTS "user_group_membership" (
-	"id" INTEGER NOT NULL,
-	"groupID" INTEGER NOT NULL,
-	"userID" INTEGER NOT NULL,
-	"role" TEXT NOT NULL,
-	PRIMARY KEY("id"),
-	FOREIGN KEY ("userID") REFERENCES "users"("id")
-	ON UPDATE NO ACTION ON DELETE NO ACTION,
-	FOREIGN KEY ("groupID") REFERENCES "groups"("id")
-	ON UPDATE NO ACTION ON DELETE NO ACTION
+CREATE TABLE user_group_membership (
+  id      INTEGER PRIMARY KEY AUTOINCREMENT,
+  groupID INTEGER NOT NULL,
+  userID  INTEGER NOT NULL,
+  role    TEXT    NOT NULL DEFAULT 'user',
+  FOREIGN KEY (groupID) REFERENCES groups(id),
+  FOREIGN KEY (userID)  REFERENCES users(id),
+  UNIQUE (groupID, userID)
 );
+CREATE UNIQUE INDEX idx_groups_key ON groups(key);
+CREATE UNIQUE INDEX idx_users_key  ON users(key);
+CREATE UNIQUE INDEX idx_users_email ON users(email);
