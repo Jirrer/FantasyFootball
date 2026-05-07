@@ -3,8 +3,8 @@
     {
       "id": "oH6gRupjNgaRfwmdpbL7M",
       "name": "groups",
-      "x": 3.3333129882811363,
-      "y": -62.666656494140625,
+      "x": 114.53954206194197,
+      "y": -133.4602980840774,
       "locked": false,
       "fields": [
         {
@@ -19,18 +19,58 @@
           "increment": true,
           "comment": "",
           "id": "7rx2S_utfI4K_GiKFQ3R-"
+        },
+        {
+          "id": "Z4dj_YJish36cuf9uTFUh",
+          "name": "key",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        },
+        {
+          "id": "m2oAYmcBwPNWEYmTuZzF0",
+          "name": "password",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        },
+        {
+          "id": "9uUSBz0oyPy7CMUGXDoV5",
+          "name": "drafted",
+          "type": "BOOLEAN",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
         }
       ],
       "comment": "",
       "indices": [],
-      "color": "#175e7a"
+      "color": "#ba1337"
     },
     {
       "id": "3X3JD9cwJ2iSfapVDNagg",
       "name": "users",
-      "x": -359.9999694824219,
-      "y": -107.33331298828125,
-      "locked": false,
+      "x": -401.9999084472656,
+      "y": -117.33331298828125,
+      "locked": true,
       "fields": [
         {
           "name": "id",
@@ -52,7 +92,7 @@
           "default": "",
           "check": "",
           "primary": false,
-          "unique": false,
+          "unique": true,
           "notNull": true,
           "increment": false,
           "comment": "",
@@ -75,9 +115,98 @@
       "comment": "",
       "indices": [],
       "color": "#175e7a"
+    },
+    {
+      "id": "EaPMleuQPx-bJzwnAE-FV",
+      "name": "user_group_membership",
+      "x": -208.00006103515625,
+      "y": 139.66668701171875,
+      "locked": false,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "UanQeKqSSxEKPymGDEf53"
+        },
+        {
+          "id": "gPR81KstJuWHVBae00Tal",
+          "name": "groupID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": "UACJ3vuSn_YmiVPqAL8Wu",
+          "name": "userID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": "Z6ddQjyHCderQhU4jI__O",
+          "name": "role",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#d6d31c"
     }
   ],
-  "relationships": [],
+  "relationships": [
+    {
+      "startTableId": "EaPMleuQPx-bJzwnAE-FV",
+      "startFieldId": "UACJ3vuSn_YmiVPqAL8Wu",
+      "endTableId": "3X3JD9cwJ2iSfapVDNagg",
+      "endFieldId": "2Om6g372QrR1apjJ_68F5",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "fk_user_group_membership_userID_users",
+      "id": "KPXoa9uenU5iGCb4cW7fL"
+    },
+    {
+      "startTableId": "EaPMleuQPx-bJzwnAE-FV",
+      "startFieldId": "gPR81KstJuWHVBae00Tal",
+      "endTableId": "oH6gRupjNgaRfwmdpbL7M",
+      "endFieldId": "7rx2S_utfI4K_GiKFQ3R-",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "fk_user_group_membership_groupID_groups",
+      "id": "wY0P6rHYkU_-YS5nYyQ-L"
+    }
+  ],
   "notes": [],
   "subjectAreas": [],
   "database": "sqlite",
