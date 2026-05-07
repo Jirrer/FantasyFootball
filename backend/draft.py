@@ -127,8 +127,8 @@ def createDraft():
     characters = string.ascii_letters + string.digits
 
     while (True):
-        # newDraftKey = ''.join(random.choices(characters, k=16))
-        newDraftKey = "devDraftKey"
+        newDraftKey = ''.join(random.choices(characters, k=16))
+        # newDraftKey = "devDraftKey"
         
         if newDraftKey in set(drafts): continue 
 
@@ -138,8 +138,8 @@ def createDraft():
 
     return jsonify({"message": "Draft started", "key": newDraftKey}), 200
 
-@bp.route('/add-player', methods=["post"])
-def addPlayer():
+@bp.route('/join-draft', methods=["post"])
+def joinDraft():
     data = request.json
 
     draftKey = data.get('draftKey')

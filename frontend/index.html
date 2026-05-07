@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Football Draft</title>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="page" id="join_create">
+        <button onclick="createDraft(
+            document.getElementById('userNameInput').value
+        )">Create Dfraft</button>
+        <button onclick="joinDraft(
+          document.getElementById('draftKeyInput').value,
+          document.getElementById('userNameInput').value
+        )">Join Draft</button>
+        <input id="draftKeyInput" placeholder="Draft key">
+        <input id="userNameInput" placeholder="User name">
+        <p id="joinResults"></p>
+    </div>
+    <div class="page" id="draftPage">
+        <nav>
+            <button onclick="showDraftPage('userPlayers')">My Players</button>
+            <button onclick="showDraftPage('draftBoard')">Draft Board</button>
+            <button onclick="showDraftPage('pickBoard')">Picks</button>
+        </nav>
+        <div class="draftPage" id="userPlayers">
+            userPlayers
+        </div>
+        <div class="draftPage" id="draftBoard">
+            draft Board
+        </div>
+        <div class="draftPage" id="pickBoard">
+            pick board
+        </div>
+    </div>
+</body>
+</html>
