@@ -12,7 +12,7 @@ def checkForPlayer(pick: "Pick"):
         return False
 
     database_location = os.getenv('DATABASE_LOCATION')
-    
+
     if not database_location:
         return False
 
@@ -35,6 +35,27 @@ def checkIfGroupExists(groupKey: str) -> bool:
         cursor.execute(
             "SELECT 1 FROM groups WHERE key = ?",
             (groupKey,),
+        )
+        return cursor.fetchone() is not None
+    
+def checkIfUserInGroup(groupKey: str, username: str) -> bool:
+    database_location = os.getenv('DATABASE_LOCATION')
+
+    if not database_location:
+        return False
+    
+    with sqlite3.connect(database_location) as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            '''
+            SELECT 1
+            FROM user_group_membership m
+            JOIN groups g ON g.id = m.groupID
+            JOIN users  u ON u.id = m.userID
+            WHERE g.key = ?
+            AND   u.username = ?
+            ''',
+            (groupKey, username),
         )
         return cursor.fetchone() is not None
 

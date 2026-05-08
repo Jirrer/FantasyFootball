@@ -1,3 +1,9 @@
+def test_check_if_user_in_group(test_database_path):
+    from backend.database import checkIfUserInGroup
+
+    assert checkIfUserInGroup("group-1", "John") is True
+    assert checkIfUserInGroup("group-1", "Alice") is True
+    assert checkIfUserInGroup("group-1", "Missing") is False
 import pytest
 
 def test_check_if_group_exists(test_database_path):

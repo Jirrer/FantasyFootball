@@ -57,7 +57,7 @@ class Pick:
         return (f"{self.name} | {self.position.name} | {self.team.name}")
         
 class Player:
-    def __init__(self, key: str, name: str): # To-Do: update key to token
+    def __init__(self, key: str, name: str):
         self.key = key
         self.team: list[Pick] = []
         self.name = name
@@ -85,7 +85,6 @@ class Draft:
     def __eq__(self, value):
         return self.key == value
         
-    
     def addPlayer(self, newPlayer: Player) -> bool:
         if len(self.players) <= 12 and self.round == 0:
             self.players.append(newPlayer)
@@ -127,22 +126,31 @@ class Draft:
 
         return False
 
-drafts: list[Draft] = []
+drafts: dict[str, Draft] = {}
 
 @bp.route('/open-draft', methods=["post"])
-def createDraft():
+def openDraft():
     data = request.json
 
     groupKey = data.get('groupKey')
     userName = data.get('userName')
 
-    if not database.checkIfAdmin(groupKey, userName):
-        return jsonify({"status": "fail", "message": "you cannot open this draft"}), 403
+    if not groupKey or not userName:
+        return jsonify({"status": "fail", "message": "NULL group or user key"}), 404
+    
+    if not database.checkIfGroupExists(groupKey):
+        return jsonify({"status": "fail", "message": "Unknown group key"}), 404
+    
+    if not database.checkIfUserInGroup(groupKey, userName):
+        return jsonify({"status": "fail", "message": "User not found in group"}), 404
 
-    if groupKey in set(drafts):
+    if not database.checkIfAdmin(groupKey, userName):
+        return jsonify({"status": "fail", "message": "You must be an admin to open the draft"}), 403
+
+    if drafts.get(groupKey):
         return jsonify({"status": "fail", "message": "draft is already open"}), 403
     
-    drafts.append(Draft(groupKey))
+    drafts[groupKey] = Draft(groupKey)
 
     return jsonify({"status": "success"}), 200
 
@@ -150,51 +158,54 @@ def createDraft():
 def joinDraft():
     data = request.json
 
-    draftKey = data.get('draftKey')
+    groupKey = data.get('draftKey') #to-Do: change to group key
     userName = data.get('userName')
 
-    if not draftKey or not userName:
-        return jsonify({"status": "fail", "reason": "Null draft key or user name"}), 404
+    if not groupKey or not userName:
+        return jsonify({"status": "fail", "reason": "Null group key or user name"}), 404
     
-    if not database.checkIfGroupExists(draftKey):
-        return jsonify({'status': "fail", 'message': "Group does not exist"}), 403
-
-    for d in drafts: #To-Do: refactor
-        if d.key == draftKey:
-            token = 'test'
-            d.addPlayer(Player(token, userName))
-
-        if d.round == 0: return jsonify({"message": "Player Added", "key": token}), 200
-        else: return jsonify({"message": "Player Joined", "key": token}), 200
+    if not database.checkIfGroupExists(groupKey):
+        return jsonify({'status': "fail", 'message': "Group does not exist"}), 404
     
-    return jsonify({'status': "fail", 'message': "could not find draft"}), 404
+    if not database.checkIfUserInGroup(groupKey, userName):
+        return jsonify({'status': "fail", 'message': "User not found in group"}), 404
+    
+    if not drafts[groupKey]:
+        return jsonify({'status': "fail", 'message': "could not find draft"}), 404
+    
+    token = 'testToken'
 
+    if not drafts[groupKey].addPlayer(Player(token, userName)):
+        return jsonify({'status': "fail", 'message': "Failed to add player for unknown reason"}), 500
 
+    return jsonify({"message": "Player Joined", "key": token}), 200
+    
 @bp.route("/start-draft", methods=["post"])
 def startDraft():
     data = request.json
 
-    draftKey = data.get('draftKey')
+    groupKey = data.get('draftKey') #To-Do: change to groupKey
     userToken = data.get('userToken') #create token
 
-    if not draftKey:
+    if not groupKey:
         return jsonify({"status": "fail", "reason": "Null draft key"}), 404
     
-    for draft in drafts:
-        if draft.key != draftKey: continue
+    if not drafts.get(groupKey):
+        return jsonify({"status": "fail", "reason": "Could not find group"}), 404
+    
+    if not len(drafts[groupKey].players):
+        return jsonify({"status": "fail", "reason": "Empty draft room"}), 403
+    
+    if not database.checkIfAdmin(groupKey, 'John'): #hard coded as admin
+        return jsonify({"status": "Fail", 'message': 'you do not have the writes to start draft'}), 403
+    
+    if not database.checkIfUserInGroup(groupKey, 'John'): #hard coded as me for now until token is done
+        return jsonify({"status": "fail", "reason": "User is not found in this draft"}), 404
 
-        if not len(draft.players):
-            return jsonify({"status": "fail - empty draft"}), 403
-        
-        if not database.checkIfAdmin(draftKey, 'John'): #hard coded as admin
-            return jsonify({"status": "Fail", 'message': 'you do not have the writes to start draft'}), 200
-
-
-        # to-do: add check if player is even in the draft
-
-
-        if draft.round == 0:
-            draft.round = 1
+    if drafts[groupKey].round != 0:
+        return jsonify({"status": "fail", "reason": "draft already started"}), 403
+    
+    drafts[groupKey].round = 1
 
     return jsonify({"status": "Success - draft started"}), 200
 
@@ -202,47 +213,48 @@ def startDraft():
 def addPick():
     data = request.json
 
-    draftKey = data.get('draftKey')
+    groupKey = data.get('draftKey') # to-do: change to group key
     userKey = data.get('userKey')
     playerName = data.get('playerName')
     playerTeam = data.get('playerTeam')
     playerPosition = data.get('playerPosition')
 
-    if not userKey or not playerName or not playerTeam or not playerPosition or not draftKey:
+    if not userKey or not playerName or not playerTeam or not playerPosition or not groupKey:
         return jsonify({"status": "fail - bad input"}), 403
+    
+    if not drafts.get(groupKey):
+        return jsonify({"status": "fail", "reason": "Unknown draft key"}), 404
 
-    for draft in drafts:
-        if draft.key == draftKey:
-            if draft.round == 0:
-                return jsonify({"status": "fail - draft has not begun"}), 404
+    if drafts[groupKey].round == 0:
+        return jsonify({"status": "fail - draft has not begun"}), 403
 
-            for player in draft.players:
-                if player.key == userKey:
-                    pos = Position.__members__.get(playerPosition.upper())
-                    if not pos: return jsonify({"status": "fail - bad player position input"}), 403 
+    for player in drafts[groupKey].players:
+        if player.key == userKey:
+            pos = Position.__members__.get(playerPosition.upper())
+            if not pos: return jsonify({"status": "fail - bad player position input"}), 403 
 
-                    team = Team.__members__.get(playerTeam.upper())
-                    if not team: return jsonify({"status": "fail - bad team input"}), 403 
+            team = Team.__members__.get(playerTeam.upper())
+            if not team: return jsonify({"status": "fail - bad team input"}), 403 
 
-                    pick = Pick(playerName, Position(pos), Team(team))
+            pick = Pick(playerName, Position(pos), Team(team))
 
-                    if not database.checkForPlayer(pick): return jsonify({"status": "fail - pick not in database"}), 404
+            if not database.checkForPlayer(pick): return jsonify({"status": "fail - pick not in database"}), 404
 
-                    if draft.makePick(player, pick): return jsonify({"status": "Success - player added"}), 200 
+            if drafts[groupKey].makePick(player, pick): return jsonify({"status": "Success - player added"}), 200 
 
-                    else:
-                        return jsonify({"status": "fail - could not make pick"}), 404 
+            else:
+                return jsonify({"status": "fail - could not make pick"}), 500 
 
-    return jsonify({"status": "fail - could not find draft"}), 404
+    return jsonify({"status": "fail - could not find user"}), 404
 
 def showDraftState():
     print("\n\n")
 
-    for draft in drafts:
-        print(f"draft - {draft.key} - Round({draft.round})")
+    for draftKey, draftInfo in drafts.items():
+        print(f"draft - {draftKey} - Round({draftInfo.round})")
         
-        for p in draft.players:
-            if draft.players.index(p) == draft.playerOnTheClock and draft.round != 0:
+        for p in draftInfo.players:
+            if draftInfo.players.index(p) == draftInfo.playerOnTheClock and draftInfo.round != 0:
                 print(f"\tUser - {p} (On the clock)")
 
             else:

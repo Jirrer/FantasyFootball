@@ -74,17 +74,10 @@ async function joinDraft(draftKey, userName) {
 
         console.log(data.message)
 
-        if (data.message === "Player Added") {
-            sessionStorage.setItem('page', 'waitingRoom')
-            showPage();
+        sessionStorage.setItem('page', 'waitingRoom')
+        showPage();
 
-        } else if (data.message === "Player Joined") {
-            sessionStorage.setItem('page', 'draftPage')
-            showPage();
-
-        } else {
-            throw new Error("Error");
-        }
+        // create a way to go from waiting room to draft page
         
         
     } catch (error) {       

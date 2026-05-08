@@ -7,7 +7,6 @@ app = Flask(__name__)
 CORS(app, origins=["http://127.0.0.1:5500"])
 app.register_blueprint(draft_bp)
 
-
 if __name__ == "__main__":
     host = os.getenv("FLASK_RUN_HOST", "127.0.0.1")
     port = int(os.getenv("FLASK_RUN_PORT", "5001"))
