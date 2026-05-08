@@ -22,5 +22,4 @@ CREATE TABLE user_group_membership (
   UNIQUE (groupID, userID)
 );
 CREATE UNIQUE INDEX idx_groups_key ON groups(key);
-CREATE UNIQUE INDEX idx_users_key  ON users(key);
 CREATE UNIQUE INDEX idx_users_email ON users(email);

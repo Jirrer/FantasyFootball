@@ -12,6 +12,7 @@ def checkForPlayer(pick: "Pick"):
         return False
 
     database_location = os.getenv('DATABASE_LOCATION')
+    
     if not database_location:
         return False
 
@@ -23,7 +24,7 @@ def checkForPlayer(pick: "Pick"):
         )
         return cursor.fetchone() is not None
     
-def checkIfGroupExists(groupKey: str):
+def checkIfGroupExists(groupKey: str) -> bool:
     database_location = os.getenv('DATABASE_LOCATION')
 
     if not database_location:
@@ -37,7 +38,7 @@ def checkIfGroupExists(groupKey: str):
         )
         return cursor.fetchone() is not None
 
-def checkIfAdmin(groupKey, username):
+def checkIfAdmin(groupKey, username) -> bool:
     database_location = os.getenv('DATABASE_LOCATION')
 
     if not database_location:
@@ -55,7 +56,10 @@ def checkIfAdmin(groupKey, username):
             AND   u.username = ?
         ''', (groupKey, username)).fetchone()
 
-        if not membership: return False
-        if not len(membership): return False
-        return membership[0] == 'admin' 
+        if not membership:
+            raise KeyError
 
+        match membership[0]:
+            case 'admin': return True
+            case 'user': return False
+            case _: raise KeyError()
