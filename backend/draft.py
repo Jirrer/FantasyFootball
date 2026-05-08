@@ -4,6 +4,8 @@ from flask import Blueprint, jsonify, request
 
 bp = Blueprint('draft', __name__)
 
+# To-Do: add token functionality
+
 class Team(enum.Enum):
     ARI = "Arizona Cardinals"
     ATL = "Atlanta Falcons"
@@ -135,8 +137,11 @@ def openDraft():
     groupKey = data.get('groupKey')
     userName = data.get('userName')
 
-    if not groupKey or not userName:
-        return jsonify({"status": "fail", "message": "NULL group or user key"}), 404
+    if not groupKey:
+        return jsonify({"status": "fail", "message": "NULL group"}), 404
+    
+    if not userName:
+        return jsonify({"status": "fail", "message": "NULL username"}), 404
     
     if not database.checkIfGroupExists(groupKey):
         return jsonify({"status": "fail", "message": "Unknown group key"}), 404
@@ -161,8 +166,11 @@ def joinDraft():
     groupKey = data.get('draftKey') #to-Do: change to group key
     userName = data.get('userName')
 
-    if not groupKey or not userName:
-        return jsonify({"status": "fail", "reason": "Null group key or user name"}), 404
+    if not groupKey:
+        return jsonify({"status": "fail", "reason": "Null group key"}), 404
+    
+    if not userName:
+        return jsonify({"status": "fail", "reason": "Null user name"}), 404
     
     if not database.checkIfGroupExists(groupKey):
         return jsonify({'status': "fail", 'message': "Group does not exist"}), 404
@@ -170,7 +178,7 @@ def joinDraft():
     if not database.checkIfUserInGroup(groupKey, userName):
         return jsonify({'status': "fail", 'message': "User not found in group"}), 404
     
-    if not drafts[groupKey]:
+    if not drafts.get(groupKey):
         return jsonify({'status': "fail", 'message': "could not find draft"}), 404
     
     token = 'testToken'
@@ -187,8 +195,15 @@ def startDraft():
     groupKey = data.get('draftKey') #To-Do: change to groupKey
     userToken = data.get('userToken') #create token
 
+    username = 'John' # Hard coded
+
+    # To-Do: maybe check if user is even in the group (like has joined)
+
     if not groupKey:
         return jsonify({"status": "fail", "reason": "Null draft key"}), 404
+    
+    if not username:
+        return jsonify({"status": "fail", "reason": "Null username"}), 404
     
     if not drafts.get(groupKey):
         return jsonify({"status": "fail", "reason": "Could not find group"}), 404
@@ -196,10 +211,10 @@ def startDraft():
     if not len(drafts[groupKey].players):
         return jsonify({"status": "fail", "reason": "Empty draft room"}), 403
     
-    if not database.checkIfAdmin(groupKey, 'John'): #hard coded as admin
+    if not database.checkIfAdmin(groupKey, username): 
         return jsonify({"status": "Fail", 'message': 'you do not have the writes to start draft'}), 403
     
-    if not database.checkIfUserInGroup(groupKey, 'John'): #hard coded as me for now until token is done
+    if not database.checkIfUserInGroup(groupKey, username): 
         return jsonify({"status": "fail", "reason": "User is not found in this draft"}), 404
 
     if drafts[groupKey].round != 0:
