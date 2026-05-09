@@ -68,7 +68,10 @@ class Player:
         return hash(self.key)
     
     def __repr__(self):
-        return f"{self.name} - {self.key}"
+        return self.name
+
+    def __contains__(self, item):
+        return item == self.name
 
 class Draft:
     def __init__(self, key: str):
@@ -181,7 +184,11 @@ def joinDraft():
     if not drafts.get(groupKey):
         return jsonify({'status': "fail", 'message': "could not find draft"}), 404
     
+    if any(player.name == userName for player in drafts[groupKey].players):
+        return jsonify({'status': "fail", 'message': "user already in this draft room"}), 200
+    
     token = 'testToken'
+
 
     if not drafts[groupKey].addPlayer(Player(token, userName)):
         return jsonify({'status': "fail", 'message': "Failed to add player for unknown reason"}), 500
@@ -234,33 +241,57 @@ def addPick():
     playerTeam = data.get('playerTeam')
     playerPosition = data.get('playerPosition')
 
-    if not userKey or not playerName or not playerTeam or not playerPosition or not groupKey:
-        return jsonify({"status": "fail - bad input"}), 403
+    if not userKey:
+        return jsonify({"status": "fail", "message": "NULL user key"}), 404
+    
+    if not playerName:
+        return jsonify({"status": "fail", "message": "NULL player name"}), 404
+    
+    if not playerTeam:
+        return jsonify({"status": "fail", "message": "NULL player team"}), 404
+    
+    if not playerPosition:
+        return jsonify({"status": "fail", "message": "NULL player position"}), 404
+    
+    if not groupKey:
+        return jsonify({"status": "fail", "message": "NULL group key"}), 404
+    
+    username = 'John' #To-Do: add token functionality
+
+    if not username:
+        return jsonify({"status": "fail", "message": "Unknown username"}), 404
     
     if not drafts.get(groupKey):
         return jsonify({"status": "fail", "reason": "Unknown draft key"}), 404
+    
+    player = None
+    for p in drafts[groupKey].players:
+        if p.name == username:
+            player = p
+            break
+
+    if not player:
+        return jsonify({"status": "fail - could not find user"}), 404
 
     if drafts[groupKey].round == 0:
         return jsonify({"status": "fail - draft has not begun"}), 403
 
-    for player in drafts[groupKey].players:
-        if player.key == userKey:
-            pos = Position.__members__.get(playerPosition.upper())
-            if not pos: return jsonify({"status": "fail - bad player position input"}), 403 
+    pos = Position.__members__.get(playerPosition.upper())
+    if not pos: return jsonify({"status": "fail - bad player position input"}), 403 
 
-            team = Team.__members__.get(playerTeam.upper())
-            if not team: return jsonify({"status": "fail - bad team input"}), 403 
+    team = Team.__members__.get(playerTeam.upper())
+    if not team: return jsonify({"status": "fail - bad team input"}), 403 
 
-            pick = Pick(playerName, Position(pos), Team(team))
+    pick = Pick(playerName, Position(pos), Team(team))
 
-            if not database.checkForPlayer(pick): return jsonify({"status": "fail - pick not in database"}), 404
+    if not database.checkForPlayer(pick): return jsonify({"status": "fail - pick not in database"}), 404
 
-            if drafts[groupKey].makePick(player, pick): return jsonify({"status": "Success - player added"}), 200 
+    if drafts[groupKey].makePick(player, pick): return jsonify({"status": "Success - player added"}), 200 
 
-            else:
-                return jsonify({"status": "fail - could not make pick"}), 500 
+    else:
+        return jsonify({"status": "fail - could not make pick"}), 500 
 
-    return jsonify({"status": "fail - could not find user"}), 404
+    
 
 def showDraftState():
     print("\n\n")

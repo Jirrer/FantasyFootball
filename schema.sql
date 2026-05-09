@@ -1,4 +1,9 @@
-CREATE TABLE Players(name text, position text, team text);
+CREATE TABLE Players(
+  id        INTEGER PRIMARY KEY AUTOINCREMENT,
+  name      TEXT, 
+  position  TEXT, 
+  team      TEXT
+);
 CREATE TABLE groups (
   id        INTEGER PRIMARY KEY AUTOINCREMENT,
   key       TEXT    NOT NULL UNIQUE,

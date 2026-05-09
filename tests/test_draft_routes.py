@@ -42,6 +42,9 @@ def test_join_draft(app_client):
     good_response = app_client.post("/join-draft", json={"draftKey": "group-1", "userName": "Alice"})
     assert good_response.status_code == 200
 
+    duplicate_response = app_client.post("/join-draft", json={"draftKey": "group-1", "userName": "Alice"})
+    assert duplicate_response.status_code == 200
+
 def test_start_draft(app_client):
     # Open Draft
     app_client.post("/open-draft", json={"groupKey": "group-1", "userName": "John"})
@@ -75,3 +78,120 @@ def test_start_draft(app_client):
 
     already_started_draft = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": "test"})
     assert already_started_draft.status_code == 403
+
+def test_add_pick(app_client):
+    app_client.post("/open-draft", json={"groupKey": "group-1", "userName": "John"})
+    
+    app_client.post("/join-draft", json={"draftKey": "group-1", "userName": "John"})
+
+    unstarted_draft_response = app_client.post("/add-pick", json={
+        "draftKey": "group-1",
+        "userKey": "John",
+        "playerName": "Josh Allen",
+        "playerTeam": "BUF",
+        "playerPosition": "QB"
+    })
+    assert unstarted_draft_response.status_code == 403
+
+    app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": "John"})
+
+    missing_userkey_response = app_client.post("/add-pick", json={
+        "draftKey": "group-1",
+        "userKey": "",
+        "playerName": "Josh Allen",
+        "playerTeam": "BUF",
+        "playerPosition": "QB"
+    })
+    assert missing_userkey_response.status_code == 404 
+    
+    missing_playernName_response = app_client.post("/add-pick", json={
+        "draftKey": "group-1",
+        "userKey": "John",
+        "playerName": "",
+        "playerTeam": "BUF",
+        "playerPosition": "QB"
+    })
+    assert missing_playernName_response.status_code == 404
+
+    missing_playerTeam_response = app_client.post("/add-pick", json={
+        "draftKey": "group-1",
+        "userKey": "John",
+        "playerName": "Josh Allen",
+        "playerTeam": "",
+        "playerPosition": "QB"
+    })
+    assert missing_playerTeam_response.status_code == 404
+
+    missing_playerPosition_response = app_client.post("/add-pick", json={
+        "draftKey": "group-1",
+        "userKey": "John",
+        "playerName": "Josh Allen",
+        "playerTeam": "BUF",
+        "playerPosition": ""
+    })
+    assert missing_playerPosition_response.status_code == 404
+
+    missing_groupKey_response = app_client.post("/add-pick", json={
+        "draftKey": "",
+        "userKey": "John",
+        "playerName": "Josh Allen",
+        "playerTeam": "BUF",
+        "playerPosition": "QB"
+    })
+    assert missing_groupKey_response.status_code == 404
+
+    unknown_group_response = app_client.post("/add-pick", json={
+        "draftKey": "group-2",
+        "userKey": "John",
+        "playerName": "Josh Allen",
+        "playerTeam": "BUF",
+        "playerPosition": "QB"
+    })
+    assert unknown_group_response.status_code == 404
+
+    unknown_user_response = app_client.post("/add-pick", json={
+        "draftKey": "group-1",
+        "userKey": "Alice",
+        "playerName": "Josh Allen",
+        "playerTeam": "BUF",
+        "playerPosition": "QB"
+    })
+    assert unknown_user_response.status_code == 404
+
+    bad_playerPosition_input_response = app_client.post("/add-pick", json={
+        "draftKey": "group-1",
+        "userKey": "John",
+        "playerName": "Josh Allen",
+        "playerTeam": "BUF",
+        "playerPosition": "invalid"
+    })
+    assert bad_playerPosition_input_response.status_code == 403
+
+    bad_playerTeam_input_response = app_client.post("/add-pick", json={
+        "draftKey": "group-1",
+        "userKey": "John",
+        "playerName": "Josh Allen",
+        "playerTeam": "invalid",
+        "playerPosition": "QB"
+    })
+    assert bad_playerTeam_input_response.status_code == 403
+
+
+    input_not_in_database_response = app_client.post("/add-pick", json={
+        "draftKey": "group-1",
+        "userKey": "John",
+        "playerName": "Real Looking Player",
+        "playerTeam": "BUF",
+        "playerPosition": "QB"
+    })
+    assert input_not_in_database_response.status_code == 404
+
+    good_response = app_client.post("/add-pick", json={
+        "draftKey": "group-1",
+        "userKey": "John",
+        "playerName": "Josh Allen",
+        "playerTeam": "BUF",
+        "playerPosition": "QB"
+    })
+
+    assert good_response.status_code == 200

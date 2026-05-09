@@ -56,26 +56,22 @@ async function joinDraft(draftKey, userName) {
             },
             body: JSON.stringify({userName: userName, draftKey: draftKey})
         });
-
-        if (!response.ok) {
-            if (response.status == 404) {
-                document.getElementById('joinResults').innerHTML = "Could not join draft";
-            } else {
-                document.getElementById('joinResults').innerHTML = "Joined draft";
-            }
-        } 
-
-        
         
         const data = await response.json();
-        sessionStorage.setItem('draftKey', draftKey);
-        sessionStorage.setItem('userName', userName);
-        sessionStorage.setItem('playerKey', data.key); 
 
-        console.log(data.message)
+        if (!response.ok) {
+            document.getElementById('joinResults').innerHTML = data.message;
 
-        sessionStorage.setItem('page', 'waitingRoom')
-        showPage();
+        } else {
+            sessionStorage.setItem('draftKey', draftKey);
+            sessionStorage.setItem('userName', userName);
+            sessionStorage.setItem('playerKey', data.key); 
+
+            sessionStorage.setItem('page', 'waitingRoom')
+            
+            showPage();  
+                      
+        }
 
         // create a way to go from waiting room to draft page
         
@@ -166,9 +162,6 @@ async function startDraft() {
         console.error(error);
     }
 }
-
-
-
 
 showPage();
 
