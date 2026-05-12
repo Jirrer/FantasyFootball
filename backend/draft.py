@@ -184,15 +184,22 @@ def joinDraft():
     if any(player.name == userName for player in drafts[groupKey].players):
         return jsonify({'status': "fail", 'message': "user already in this draft room"}), 200
     
-    token = generateUserToken()
+    token = generateUserToken(groupKey)
 
     if not drafts[groupKey].addPlayer(Player(token, userName)):
         return jsonify({'status': "fail", 'message': "Failed to add player for unknown reason"}), 500
 
     return jsonify({"message": "Player Joined", "key": token}), 200
 
-def generateUserToken() -> str:
-    return secrets.token_urlsafe(32)
+def generateUserToken(groupID: str) -> str:
+    seenTokens = set([p.key for p in drafts[groupID].players])
+
+    secret = secrets.token_urlsafe(32)
+
+    while (seenTokens  in seenTokens):
+        secret = secrets.token_urlsafe(32)
+    
+    return secret
     
 @bp.route("/start-draft", methods=["post"])
 def startDraft():
@@ -210,11 +217,7 @@ def startDraft():
     if not drafts.get(groupKey):
         return jsonify({"status": "fail", "reason": "Could not find group"}), 404
 
-    print(userToken)
-
     username = getUsernameFromToken(groupKey, userToken)
-
-    # To-Do: maybe check if user is even in the group (like has joined)
     
     if not username:
         return jsonify({"status": "fail", "reason": "Null username"}), 404
@@ -295,7 +298,7 @@ def addPick():
     else:
         return jsonify({"status": "fail - could not make pick"}), 500 
     
-def getUsernameFromToken(groupID:str, userToken: str): # To-Do: move to another file
+def getUsernameFromToken(groupID:str, userToken: str):
     if not drafts.get(groupID):
         return None
 
@@ -305,8 +308,6 @@ def getUsernameFromToken(groupID:str, userToken: str): # To-Do: move to another 
             return player.name
 
     return None
-
-    
 
 def showDraftState():
     print("\n\n")
@@ -320,7 +321,6 @@ def showDraftState():
 
             else:
                 print(f"\tUser - {p}")
-
 
             for x in p.team:
                 print(f"\t\tPlayer - {x}")
