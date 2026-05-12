@@ -49,32 +49,30 @@ def test_start_draft(app_client):
     # Open Draft
     app_client.post("/open-draft", json={"groupKey": "group-1", "userName": "John"})
 
+    # Join Draft
     john_join_response = app_client.post("/join-draft", json={"draftKey": "group-1", "userName": "John"})
     john_token = john_join_response.get_json()["key"]
+
+    alice_join_response = app_client.post("/join-draft", json={"draftKey": "group-1", "userName": "Alice"})
+    alice_token = alice_join_response.get_json()["key"]
 
     empty_room_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": "test"})
     assert empty_room_response.status_code == 404
 
-    # Join Draft
-    app_client.post("/join-draft", json={"draftKey": "group-1", "userName": "Alice"})
-
     missing_group_response = app_client.post("/start-draft", json={"draftKey": "", "userToken": "test"})
     assert missing_group_response.status_code == 404
 
-    # Does not work while username is hardcoded
-    # missing_user_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": ""})
-    # assert missing_user_response.status_code == 404
+    missing_user_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": ""})
+    assert missing_user_response.status_code == 404
 
-    # Does not work while username is hardcoded
-    # not_admin_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": "test"})
-    # assert not_admin_response.status_code == 403
+    not_admin_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": alice_token})
+    assert not_admin_response.status_code == 403
 
     unknown_group_response = app_client.post("/start-draft", json={"draftKey": "group-2", "userToken": "test"})
     assert unknown_group_response.status_code == 404
 
-    # Does not work while username is hardcoded
-    # user_not_in_group_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": "alice"})
-    # assert user_not_in_group_response.status_code == 404
+    user_not_in_group_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": "alice"})
+    assert user_not_in_group_response.status_code == 404
 
     good_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": john_token})
     assert good_response.status_code == 200
