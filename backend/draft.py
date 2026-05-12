@@ -1,11 +1,8 @@
-import os, random, string, enum
+import os, random, string, enum, secrets
 import backend.database as database
 from flask import Blueprint, jsonify, request
 
 bp = Blueprint('draft', __name__)
-
-# To-Do: add token functionality
-
 class Team(enum.Enum):
     ARI = "Arizona Cardinals"
     ATL = "Atlanta Falcons"
@@ -187,42 +184,49 @@ def joinDraft():
     if any(player.name == userName for player in drafts[groupKey].players):
         return jsonify({'status': "fail", 'message': "user already in this draft room"}), 200
     
-    token = 'testToken'
-
+    token = generateUserToken()
 
     if not drafts[groupKey].addPlayer(Player(token, userName)):
         return jsonify({'status': "fail", 'message': "Failed to add player for unknown reason"}), 500
 
     return jsonify({"message": "Player Joined", "key": token}), 200
+
+def generateUserToken() -> str:
+    return secrets.token_urlsafe(32)
     
 @bp.route("/start-draft", methods=["post"])
 def startDraft():
     data = request.json
 
     groupKey = data.get('draftKey') #To-Do: change to groupKey
-    userToken = data.get('userToken') #create token
+    userToken = data.get('userToken') 
 
-    username = 'John' # Hard coded
-
-    # To-Do: maybe check if user is even in the group (like has joined)
+    if not userToken:
+        return jsonify({"status": "fail", "reason": "Null user token"}), 404
 
     if not groupKey:
         return jsonify({"status": "fail", "reason": "Null draft key"}), 404
+
+    if not drafts.get(groupKey):
+        return jsonify({"status": "fail", "reason": "Could not find group"}), 404
+
+    print(userToken)
+
+    username = getUsernameFromToken(groupKey, userToken)
+
+    # To-Do: maybe check if user is even in the group (like has joined)
     
     if not username:
         return jsonify({"status": "fail", "reason": "Null username"}), 404
     
-    if not drafts.get(groupKey):
-        return jsonify({"status": "fail", "reason": "Could not find group"}), 404
-    
     if not len(drafts[groupKey].players):
         return jsonify({"status": "fail", "reason": "Empty draft room"}), 403
     
-    if not database.checkIfAdmin(groupKey, username): 
-        return jsonify({"status": "Fail", 'message': 'you do not have the writes to start draft'}), 403
-    
     if not database.checkIfUserInGroup(groupKey, username): 
         return jsonify({"status": "fail", "reason": "User is not found in this draft"}), 404
+    
+    if not database.checkIfAdmin(groupKey, username): 
+        return jsonify({"status": "Fail", 'message': 'you do not have the writes to start draft'}), 403
 
     if drafts[groupKey].round != 0:
         return jsonify({"status": "fail", "reason": "draft already started"}), 403
@@ -236,12 +240,12 @@ def addPick():
     data = request.json
 
     groupKey = data.get('draftKey') # to-do: change to group key
-    userKey = data.get('userKey')
+    userToken = data.get('token')
     playerName = data.get('playerName')
     playerTeam = data.get('playerTeam')
     playerPosition = data.get('playerPosition')
 
-    if not userKey:
+    if not userToken:
         return jsonify({"status": "fail", "message": "NULL user key"}), 404
     
     if not playerName:
@@ -255,14 +259,14 @@ def addPick():
     
     if not groupKey:
         return jsonify({"status": "fail", "message": "NULL group key"}), 404
+
+    if not drafts.get(groupKey):
+        return jsonify({"status": "fail", "reason": "Unknown draft key"}), 404
     
-    username = 'John' #To-Do: add token functionality
+    username = getUsernameFromToken(groupKey, userToken)
 
     if not username:
         return jsonify({"status": "fail", "message": "Unknown username"}), 404
-    
-    if not drafts.get(groupKey):
-        return jsonify({"status": "fail", "reason": "Unknown draft key"}), 404
     
     player = None
     for p in drafts[groupKey].players:
@@ -290,6 +294,17 @@ def addPick():
 
     else:
         return jsonify({"status": "fail - could not make pick"}), 500 
+    
+def getUsernameFromToken(groupID:str, userToken: str): # To-Do: move to another file
+    if not drafts.get(groupID):
+        return None
+
+    for player in drafts[groupID].players:
+        print(player.key, userToken)
+        if player.key == userToken:
+            return player.name
+
+    return None
 
     
 

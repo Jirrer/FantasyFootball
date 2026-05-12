@@ -65,7 +65,7 @@ async function joinDraft(draftKey, userName) {
         } else {
             sessionStorage.setItem('draftKey', draftKey);
             sessionStorage.setItem('userName', userName);
-            sessionStorage.setItem('playerKey', data.key); 
+            sessionStorage.setItem('token', data.key); 
 
             sessionStorage.setItem('page', 'waitingRoom')
             
@@ -101,9 +101,7 @@ function goToPicks() {
 
 async function sendPick(playerTeam, playerPosition, playerName) {
     const draftKey = sessionStorage.getItem('draftKey');
-    const userKey = sessionStorage.getItem('playerKey');
-
-    console.log(playerTeam)
+    const userToken = sessionStorage.getItem('token');
 
     try {
         const response = await fetch(`${API_URL}/add-pick`, {
@@ -111,7 +109,7 @@ async function sendPick(playerTeam, playerPosition, playerName) {
             headers: {"Content-Type": 'application/json'},
             body: JSON.stringify({
                 draftKey: draftKey,
-                userKey: userKey,
+                token: userToken,
                 playerName: playerName,
                 playerTeam: playerTeam,
                 playerPosition: playerPosition,
@@ -131,7 +129,7 @@ async function sendPick(playerTeam, playerPosition, playerName) {
 
 async function startDraft() {
     const groupKey = sessionStorage.getItem('draftKey');
-    const userToken = sessionStorage.getItem('userKey');
+    const userToken = sessionStorage.getItem('token');
 
     try {
         const response = await fetch (`${API_URL}/start-draft`, {

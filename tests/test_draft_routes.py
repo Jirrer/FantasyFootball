@@ -49,8 +49,11 @@ def test_start_draft(app_client):
     # Open Draft
     app_client.post("/open-draft", json={"groupKey": "group-1", "userName": "John"})
 
+    john_join_response = app_client.post("/join-draft", json={"draftKey": "group-1", "userName": "John"})
+    john_token = john_join_response.get_json()["key"]
+
     empty_room_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": "test"})
-    assert empty_room_response.status_code == 403
+    assert empty_room_response.status_code == 404
 
     # Join Draft
     app_client.post("/join-draft", json={"draftKey": "group-1", "userName": "Alice"})
@@ -73,31 +76,32 @@ def test_start_draft(app_client):
     # user_not_in_group_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": "alice"})
     # assert user_not_in_group_response.status_code == 404
 
-    good_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": "John"})
+    good_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": john_token})
     assert good_response.status_code == 200
 
-    already_started_draft = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": "test"})
+    already_started_draft = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": john_token})
     assert already_started_draft.status_code == 403
 
 def test_add_pick(app_client):
     app_client.post("/open-draft", json={"groupKey": "group-1", "userName": "John"})
     
-    app_client.post("/join-draft", json={"draftKey": "group-1", "userName": "John"})
+    john_join_response = app_client.post("/join-draft", json={"draftKey": "group-1", "userName": "John"})
+    john_token = john_join_response.get_json()["key"]
 
     unstarted_draft_response = app_client.post("/add-pick", json={
         "draftKey": "group-1",
-        "userKey": "John",
+        "token": john_token,
         "playerName": "Josh Allen",
         "playerTeam": "BUF",
         "playerPosition": "QB"
     })
     assert unstarted_draft_response.status_code == 403
 
-    app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": "John"})
+    app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": john_token})
 
     missing_userkey_response = app_client.post("/add-pick", json={
         "draftKey": "group-1",
-        "userKey": "",
+        "token": "",
         "playerName": "Josh Allen",
         "playerTeam": "BUF",
         "playerPosition": "QB"
@@ -106,7 +110,7 @@ def test_add_pick(app_client):
     
     missing_playernName_response = app_client.post("/add-pick", json={
         "draftKey": "group-1",
-        "userKey": "John",
+        "token": john_token,
         "playerName": "",
         "playerTeam": "BUF",
         "playerPosition": "QB"
@@ -115,7 +119,7 @@ def test_add_pick(app_client):
 
     missing_playerTeam_response = app_client.post("/add-pick", json={
         "draftKey": "group-1",
-        "userKey": "John",
+        "token": john_token,
         "playerName": "Josh Allen",
         "playerTeam": "",
         "playerPosition": "QB"
@@ -124,7 +128,7 @@ def test_add_pick(app_client):
 
     missing_playerPosition_response = app_client.post("/add-pick", json={
         "draftKey": "group-1",
-        "userKey": "John",
+        "token": john_token,
         "playerName": "Josh Allen",
         "playerTeam": "BUF",
         "playerPosition": ""
@@ -133,7 +137,7 @@ def test_add_pick(app_client):
 
     missing_groupKey_response = app_client.post("/add-pick", json={
         "draftKey": "",
-        "userKey": "John",
+        "token": john_token,
         "playerName": "Josh Allen",
         "playerTeam": "BUF",
         "playerPosition": "QB"
@@ -142,7 +146,7 @@ def test_add_pick(app_client):
 
     unknown_group_response = app_client.post("/add-pick", json={
         "draftKey": "group-2",
-        "userKey": "John",
+        "token": john_token,
         "playerName": "Josh Allen",
         "playerTeam": "BUF",
         "playerPosition": "QB"
@@ -151,7 +155,7 @@ def test_add_pick(app_client):
 
     unknown_user_response = app_client.post("/add-pick", json={
         "draftKey": "group-1",
-        "userKey": "Alice",
+        "token": "Alice",
         "playerName": "Josh Allen",
         "playerTeam": "BUF",
         "playerPosition": "QB"
@@ -160,7 +164,7 @@ def test_add_pick(app_client):
 
     bad_playerPosition_input_response = app_client.post("/add-pick", json={
         "draftKey": "group-1",
-        "userKey": "John",
+        "token": john_token,
         "playerName": "Josh Allen",
         "playerTeam": "BUF",
         "playerPosition": "invalid"
@@ -169,17 +173,16 @@ def test_add_pick(app_client):
 
     bad_playerTeam_input_response = app_client.post("/add-pick", json={
         "draftKey": "group-1",
-        "userKey": "John",
+        "token": john_token,
         "playerName": "Josh Allen",
         "playerTeam": "invalid",
         "playerPosition": "QB"
     })
     assert bad_playerTeam_input_response.status_code == 403
 
-
     input_not_in_database_response = app_client.post("/add-pick", json={
         "draftKey": "group-1",
-        "userKey": "John",
+        "token": john_token,
         "playerName": "Real Looking Player",
         "playerTeam": "BUF",
         "playerPosition": "QB"
@@ -188,9 +191,9 @@ def test_add_pick(app_client):
 
     good_response = app_client.post("/add-pick", json={
         "draftKey": "group-1",
-        "userKey": "John",
-        "playerName": "Josh Allen",
-        "playerTeam": "BUF",
+        "token": john_token,
+        "playerName": "Sample Player",
+        "playerTeam": "ARI",
         "playerPosition": "QB"
     })
 
