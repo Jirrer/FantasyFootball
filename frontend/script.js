@@ -6,12 +6,13 @@ if (!sessionStorage.getItem('page')) {
 
 function showPage() {
     const pageId = sessionStorage.getItem('page');
+    const isWaitingRoom = pageId === 'waitingRoom';
 
     document.querySelectorAll('.page').forEach(page => {
         page.style.display = 'none';
     });
 
-    document.getElementById(pageId).style.display = 'block';
+    document.getElementById(pageId).style.display = isWaitingRoom ? 'flex' : 'block';
 }
 
 function showDraftPage() {
@@ -70,6 +71,18 @@ async function joinDraft(draftKey, userName) {
             sessionStorage.setItem('page', 'waitingRoom')
             
             showPage();  
+
+            console.log(data)
+
+            if (data.admin && data.started) {
+                document.getElementById("startDraftButton").innerHTML = "Join Draft"
+            } else if (data.admin) { 
+                document.getElementById("startDraftButton").innerHTML = "Start Draft"
+            } else if (data.started) {
+                document.getElementById("startDraftButton").innerHTML = "Join Draft"
+            } else {
+                document.getElementById("startDraftButton").innerHTML = "Waiting For Draft"
+            }
                       
         }
 
