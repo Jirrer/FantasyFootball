@@ -1,5 +1,5 @@
 import os, random, string, enum, secrets
-import backend.database as database
+from . import database
 from flask import Blueprint, jsonify, request
 
 bp = Blueprint('draft', __name__)

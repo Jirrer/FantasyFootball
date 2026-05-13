@@ -1,0 +1,381 @@
+{
+  "tables": [
+    {
+      "id": "oH6gRupjNgaRfwmdpbL7M",
+      "name": "groups",
+      "x": -347.4604579380582,
+      "y": -237.41029808407743,
+      "locked": true,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "7rx2S_utfI4K_GiKFQ3R-"
+        },
+        {
+          "id": "Z4dj_YJish36cuf9uTFUh",
+          "name": "key",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        },
+        {
+          "id": "m2oAYmcBwPNWEYmTuZzF0",
+          "name": "password",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        },
+        {
+          "id": "9uUSBz0oyPy7CMUGXDoV5",
+          "name": "drafted",
+          "type": "BOOLEAN",
+          "default": "true",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#ba1337"
+    },
+    {
+      "id": "3X3JD9cwJ2iSfapVDNagg",
+      "name": "users",
+      "x": -350.5499084472657,
+      "y": -13.383312988281233,
+      "locked": true,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "2Om6g372QrR1apjJ_68F5"
+        },
+        {
+          "id": "sTyKq8fGGse-hJGuLz0fJ",
+          "name": "username",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": true,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        },
+        {
+          "id": "4DtQJG0UHKBIJkXp5PqwA",
+          "name": "email",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        },
+        {
+          "id": "uLON6m0XuL4K2r_RRHNsV",
+          "name": "password",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#175e7a"
+    },
+    {
+      "id": "EaPMleuQPx-bJzwnAE-FV",
+      "name": "user_group_membership",
+      "x": 90.19993896484357,
+      "y": -165.88331298828132,
+      "locked": true,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "UanQeKqSSxEKPymGDEf53"
+        },
+        {
+          "id": "gPR81KstJuWHVBae00Tal",
+          "name": "groupID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": "UACJ3vuSn_YmiVPqAL8Wu",
+          "name": "userID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": "Z6ddQjyHCderQhU4jI__O",
+          "name": "role",
+          "type": "TEXT",
+          "default": "user",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#d6d31c"
+    },
+    {
+      "id": "Z5hXEyAzg8ySAHTvqEela",
+      "name": "Players",
+      "x": 502.7691276874996,
+      "y": 101.43599363281254,
+      "locked": false,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "afhOEJwowKZRVuzshQ9NJ"
+        },
+        {
+          "id": "rTLPFMS7f49ASh7CL12V2",
+          "name": "name",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        },
+        {
+          "id": "-jDXEMRCX6wyYdC2JPBLy",
+          "name": "position",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        },
+        {
+          "id": "0rfaWphahDsIwS5pgTvmS",
+          "name": "team",
+          "type": "TEXT",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": 65535
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#56d19c",
+      "hidden": false
+    },
+    {
+      "id": "09eqbGfk8DL5MqQv2UYq0",
+      "name": "Picks",
+      "x": 500.53549439173275,
+      "y": -166.63833467298141,
+      "locked": false,
+      "fields": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": true,
+          "unique": false,
+          "unsigned": true,
+          "notNull": true,
+          "increment": true,
+          "comment": "",
+          "id": "5dFFoeGT1WOU530BSHb0m"
+        },
+        {
+          "id": "goHe8x12urxSLbMG3iX3U",
+          "name": "userGroupID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": "RXMtFZbjQOxA2odgNr3s3",
+          "name": "season",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": true,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        },
+        {
+          "id": "EWQROhnPmvs4xUrdbOfdF",
+          "name": "pickID",
+          "type": "INTEGER",
+          "default": "",
+          "check": "",
+          "primary": false,
+          "unique": false,
+          "notNull": false,
+          "increment": false,
+          "comment": "",
+          "size": "",
+          "values": []
+        }
+      ],
+      "comment": "",
+      "indices": [],
+      "color": "#2e29cc"
+    }
+  ],
+  "relationships": [
+    {
+      "startTableId": "EaPMleuQPx-bJzwnAE-FV",
+      "startFieldId": "UACJ3vuSn_YmiVPqAL8Wu",
+      "endTableId": "3X3JD9cwJ2iSfapVDNagg",
+      "endFieldId": "2Om6g372QrR1apjJ_68F5",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "user to user_group",
+      "id": "KPXoa9uenU5iGCb4cW7fL"
+    },
+    {
+      "startTableId": "EaPMleuQPx-bJzwnAE-FV",
+      "startFieldId": "gPR81KstJuWHVBae00Tal",
+      "endTableId": "oH6gRupjNgaRfwmdpbL7M",
+      "endFieldId": "7rx2S_utfI4K_GiKFQ3R-",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "group to user_group",
+      "id": "wY0P6rHYkU_-YS5nYyQ-L"
+    },
+    {
+      "startTableId": "09eqbGfk8DL5MqQv2UYq0",
+      "startFieldId": "goHe8x12urxSLbMG3iX3U",
+      "endTableId": "EaPMleuQPx-bJzwnAE-FV",
+      "endFieldId": "gPR81KstJuWHVBae00Tal",
+      "cardinality": "one_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "user's pick",
+      "id": "NEDBnLBpFCWIJ1wP-Tnsa"
+    },
+    {
+      "startTableId": "09eqbGfk8DL5MqQv2UYq0",
+      "startFieldId": "EWQROhnPmvs4xUrdbOfdF",
+      "endTableId": "Z5hXEyAzg8ySAHTvqEela",
+      "endFieldId": "afhOEJwowKZRVuzshQ9NJ",
+      "cardinality": "many_to_one",
+      "updateConstraint": "No action",
+      "deleteConstraint": "No action",
+      "name": "pick's players",
+      "id": "rGuUn2zapywoTVfK1CQCD"
+    }
+  ],
+  "notes": [],
+  "subjectAreas": [],
+  "database": "sqlite",
+  "title": "Fantasy Football"
+}

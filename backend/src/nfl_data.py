@@ -25,4 +25,4 @@ def updatePlayersTable(year: int):
     print(f"Inserted {len(output)} players into database")
 
 if __name__ == "__main__":
-    pass
+    updatePlayersTable(2025)

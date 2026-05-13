@@ -1,0 +1,47 @@
+CREATE TABLE IF NOT EXISTS "groups" (
+	"id" INTEGER NOT NULL,
+	"key" TEXT NOT NULL UNIQUE,
+	"password" TEXT NOT NULL,
+	"drafted" BOOLEAN NOT NULL,
+	PRIMARY KEY("id")
+);
+
+CREATE TABLE IF NOT EXISTS "users" (
+	"id" INTEGER NOT NULL,
+	"username" TEXT NOT NULL UNIQUE,
+	"email" TEXT,
+	"password" TEXT NOT NULL,
+	PRIMARY KEY("id")
+);
+
+CREATE TABLE IF NOT EXISTS "user_group_membership" (
+	"id" INTEGER NOT NULL,
+	"groupID" INTEGER NOT NULL,
+	"userID" INTEGER NOT NULL,
+	"role" TEXT DEFAULT 'user',
+	PRIMARY KEY("id"),
+	FOREIGN KEY ("userID") REFERENCES "users"("id")
+	ON UPDATE NO ACTION ON DELETE NO ACTION,
+	FOREIGN KEY ("groupID") REFERENCES "groups"("id")
+	ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+CREATE TABLE IF NOT EXISTS "Players" (
+	"id" INTEGER NOT NULL,
+	"name" TEXT NOT NULL,
+	"position" TEXT NOT NULL,
+	"team" TEXT NOT NULL,
+	PRIMARY KEY("id")
+);
+
+CREATE TABLE IF NOT EXISTS "Picks" (
+	"id" INTEGER NOT NULL,
+	"userGroupID" INTEGER NOT NULL,
+	"season" INTEGER NOT NULL,
+	"pickID" INTEGER,
+	PRIMARY KEY("id"),
+	FOREIGN KEY ("userGroupID") REFERENCES "user_group_membership"("groupID")
+	ON UPDATE NO ACTION ON DELETE NO ACTION,
+	FOREIGN KEY ("pickID") REFERENCES "Players"("id")
+	ON UPDATE NO ACTION ON DELETE NO ACTION
+);

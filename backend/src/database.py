@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from app import Pick
+    from .draft import Pick
 
 load_dotenv()
 
