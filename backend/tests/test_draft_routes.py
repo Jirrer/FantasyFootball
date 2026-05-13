@@ -56,7 +56,8 @@ def test_start_draft(app_client):
     assert empty_room_response.status_code == 404
 
     # Join Draft
-    app_client.post("/join-draft", json={"draftKey": "group-1", "userName": "Alice"})
+    alice_join_response = app_client.post("/join-draft", json={"draftKey": "group-1", "userName": "Alice"})
+    alice_token = alice_join_response.get_json()["key"]
 
     missing_group_response = app_client.post("/start-draft", json={"draftKey": "", "userToken": "test"})
     assert missing_group_response.status_code == 404
@@ -66,7 +67,7 @@ def test_start_draft(app_client):
     assert missing_user_response.status_code == 404
 
     # Does not work while username is hardcoded
-    not_admin_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": "test"})
+    not_admin_response = app_client.post("/start-draft", json={"draftKey": "group-1", "userToken": alice_token})
     assert not_admin_response.status_code == 403
 
     unknown_group_response = app_client.post("/start-draft", json={"draftKey": "group-2", "userToken": "test"})
