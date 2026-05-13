@@ -66,11 +66,16 @@ body {
 }
 
 #waitingRoom {
-    background-color: #f9f9f9;
+    background-color: cornflowerblue;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+}
+
+#waitingRoom p {
+    font-size: xx-large;
 }
 
 #waitingRoom button {
@@ -83,6 +88,7 @@ body {
     font-size: 18px;
     font-weight: bold;
     transition: background-color 0.3s;
+    background-color: green;
 }
 
 #waitingRoom button:hover {

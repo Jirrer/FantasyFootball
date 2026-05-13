@@ -184,19 +184,25 @@ def joinDraft():
     if any(player.name == userName for player in drafts[groupKey].players):
         return jsonify({'status': "fail", 'message': "user already in this draft room"}), 200
     
+    # To-Do: add a place here to let a user  rejoin and get new key
+    
     token = generateUserToken(groupKey)
 
     if not drafts[groupKey].addPlayer(Player(token, userName)):
         return jsonify({'status': "fail", 'message': "Failed to add player for unknown reason"}), 500
 
-    return jsonify({"message": "Player Joined", "key": token}), 200
+    return jsonify({"message": "Player Joined",
+                    "key": token,
+                    "admin": database.checkIfAdmin(groupKey, getUsernameFromToken(groupKey, token)),
+                    "started": drafts[groupKey].round > 0
+                    }), 200
 
 def generateUserToken(groupID: str) -> str:
     seenTokens = set([p.key for p in drafts[groupID].players])
 
     secret = secrets.token_urlsafe(32)
 
-    while (seenTokens  in seenTokens):
+    while (seenTokens in seenTokens):
         secret = secrets.token_urlsafe(32)
     
     return secret
