@@ -10,4 +10,7 @@ Users are awarded points for their starters performance, as well as additional p
 Users must assemble a starting linup each week with whatever players that are still available (with many spots becoming empty as the postseason progresses).
 Finally, whicher user has the most total Fantasy points at the end of the superbowl is the winner of the group.
 
+## Diagram
+
 ## Using the web app
+The application can be accessing by visiting https://jirrer.github.io/FantasyFootball/. 
