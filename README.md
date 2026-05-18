@@ -9,3 +9,5 @@ Every week before the games begin each user will set their lineup, choosing who 
 Users are awarded points for their starters performance, as well as additional points if that players team advances.
 Users must assemble a starting linup each week with whatever players that are still available (with many spots becoming empty as the postseason progresses).
 Finally, whicher user has the most total Fantasy points at the end of the superbowl is the winner of the group.
+
+## Using the web app
